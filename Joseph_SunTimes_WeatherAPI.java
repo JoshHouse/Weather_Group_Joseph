@@ -4,7 +4,7 @@ import java.net.http.HttpResponse; // Import HttpResponse to handle the API resp
 import java.net.URI;  // Import URI to handle the request URL
 import org.json.JSONObject;  // Import JSONObject for parsing the JSON response (you will need to include the org.json library)
 
-public class SunTimesApp {
+public class Joseph_SunTimes_WeatherAPI {
     public static void main(String[] args) throws Exception {
         
         // OpenWeatherMap API key
