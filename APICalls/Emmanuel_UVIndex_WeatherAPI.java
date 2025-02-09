@@ -6,7 +6,6 @@ import java.net.http.HttpResponse;
 import java.net.URI;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonParser;
 
 public class Emmanuel_UVIndex_WeatherAPI {
     public static void main(String[] args) throws Exception {
