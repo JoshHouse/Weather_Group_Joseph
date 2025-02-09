@@ -31,6 +31,9 @@ import java.net.http.HttpResponse;
  */
 import java.net.URI;
 
+import com.google.gson.Gson;
+
+import APICalls.CurrentWeatherDataClasses.CurrentWeatherResponse;
 
 public class Josh_Conditions_WeatherAPI {
     public static void main(String[] args) throws Exception {
@@ -48,7 +51,7 @@ public class Josh_Conditions_WeatherAPI {
          *  - The URL is stored in a variable to make future code more readable but this is
          *    the structure of the OpenWeatherAPI's Current Weather Data query
          */
-        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
 
 
         /*
@@ -93,7 +96,19 @@ public class Josh_Conditions_WeatherAPI {
          */
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         
+        Gson gson = new Gson();
+
+        CurrentWeatherResponse weatherResponse = gson.fromJson(response.body(), CurrentWeatherResponse.class);
         // Prints the response
-        System.out.println(response.body());
+        System.out.println("The current weather conditions in " + weatherResponse.name + " at longitude " + weatherResponse.coord.lon
+        + " and latitude " + weatherResponse.coord.lat + " are as follows:");
+        for (int x = 0; x < weatherResponse.weather.length; x++) {
+            System.out.println("Weather Status: " + weatherResponse.weather[x].main);
+            System.out.println("\t - Description: " + weatherResponse.weather[x].description);
+        }
+        System.out.println("Temperature: " + weatherResponse.main.temp + " F");
+        System.out.println("\t - Temperature Range: " + weatherResponse.main.temp_min + " F to " + weatherResponse.main.temp_max + " F");
+        System.out.println("\t - Feels Like: " + weatherResponse.main.feels_like + " F");
+        System.out.println("Wind: " + weatherResponse.wind.speed + " mph");
     }
 }
