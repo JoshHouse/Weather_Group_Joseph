@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "Josh_Conditions_WeatherAPI",
+            "request": "launch",
+            "mainClass": "APICalls.Josh_Conditions_WeatherAPI",
+            "projectName": "Weather_Group_Joseph_570c01c5"
+        },
+        {
             "type": "jdk",
             "request": "launch",
             "name": "Launch Java App"
