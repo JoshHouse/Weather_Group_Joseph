@@ -1,9 +1,11 @@
 import React from "react";
+import WeatherConditionsPage from "./Components/WeatherConditionsPage.js"
 
 function App() {
   return (
     <div>
-      <h1>Welcome to React with Weather_Group_Joseph!</h1>
+      <h1>WeatherConditionsPage Test</h1>
+      <WeatherConditionsPage />
     </div>
   );
 }
