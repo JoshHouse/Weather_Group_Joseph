@@ -1,38 +1,28 @@
 {
   "name": "weather_group_joseph",
-  "version": "1.0.0",
-  "description": "This is the repository for Weather_Group_Joseph's Weather Dashboard Project for Software Engineering 2",
-  "main": "index.js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JoshHouse/Weather_Group_Joseph.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JoshHouse/Weather_Group_Joseph/issues"
-  },
-  "homepage": "https://github.com/JoshHouse/Weather_Group_Joseph#readme",
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.8",
-    "@babel/preset-env": "^7.26.8",
-    "@babel/preset-react": "^7.26.3",
-    "babel-loader": "^9.2.1",
-    "css-loader": "^7.1.2",
-    "html-webpack-plugin": "^5.6.3",
-    "style-loader": "^4.0.0",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "@eslint/js": "^9.19.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "vite": "^6.1.0"
   }
 }
