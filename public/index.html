@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>React with Weather_Group_Joseph</title>
+    <title>Weather Comparison</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <h1>Weather Comparison</h1>
+        <div class="search-container">
+            <label for="location1">Location 1:</label>
+            <input type="text" id="location1" placeholder="Enter Location 1">
+            <label for="location2">Location 2:</label>
+            <input type="text" id="location2" placeholder="Enter Location 2">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div class="previous-searches">
+            <label for="prevLocation1">Select Previous Location 1:</label>
+            <select id="prevLocation1"></select>
+            <label for="prevLocation2">Select Previous Location 2:</label>
+            <select id="prevLocation2"></select>
+        </div>
+        <div class="compare-options">
+            <h3>Select What to Compare:</h3>
+            <label><input type="checkbox" name="compare" value="name"> Name</label>
+            <label><input type="checkbox" name="compare" value="city"> City</label>
+            <label><input type="checkbox" name="compare" value="state"> State</label>
+            <label><input type="checkbox" name="compare" value="temp"> Current Temp (Feels Like)</label>
+            <label><input type="checkbox" name="compare" value="conditions"> Weather Conditions</label>
+            <label><input type="checkbox" name="compare" value="wind"> Wind Direction & Speed</label>
+            <label><input type="checkbox" name="compare" value="sunrise"> Sunrise</label>
+            <label><input type="checkbox" name="compare" value="sunset"> Sunset</label>
+            <label><input type="checkbox" name="compare" value="uv"> UV Index</label>
+            <label><input type="checkbox" name="compare" value="air"> Air Quality</label>
+        </div>
+        <button id="compareBtn">Compare</button>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

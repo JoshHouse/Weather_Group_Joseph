@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AirQualityAPI",
+            "request": "launch",
+            "mainClass": "AirQualityAPI",
+            "projectName": "Weather_Group_Joseph_cecbbed1"
+        },
+        {
+            "type": "java",
             "name": "Josh_Conditions_WeatherAPI",
             "request": "launch",
             "mainClass": "APICalls.Josh_Conditions_WeatherAPI",
