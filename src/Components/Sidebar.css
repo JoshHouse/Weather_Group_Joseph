@@ -1,0 +1,80 @@
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: #2C3E50;
+    color: white;
+    padding-top: 20px;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+    .sidebar.closed {
+        transform: translateX(-100%);
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .sidebar ul {
+        list-style-type: none; /* Removes bullet points */
+        padding: 0;
+    }
+
+        .sidebar ul li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+            .sidebar ul li a {
+                text-decoration: none; /* Removes underline */
+                color: white;
+                display: block;
+                font-size: 20px; /* Increased font size */
+                font-weight: bold;
+            }
+
+            .sidebar ul li:hover {
+                background-color: #1A252F;
+            }
+
+.about {
+    text-align: left;
+    padding: 15px;
+    margin-top: auto; /* Moves "About" to the bottom */
+}
+
+    .about a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+        .about a:hover {
+            text-decoration: underline;
+        }
+
+.toggle-btn {
+    position: fixed;
+    left: 230px;
+    top: 15px;
+    background: #2C3E50;
+    color: white;
+    border: none;
+    font-size: 18px;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .toggle-btn:hover {
+        background: #1A252F;
+    }
