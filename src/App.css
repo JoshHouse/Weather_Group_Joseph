@@ -1,0 +1,32 @@
+/* App.css */
+.app-container {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+  }
+  
+  .sidebar button {
+    width: 100%;
+    padding: 10px;
+    background-color: #34495e;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .sidebar button:hover {
+    background-color: #2c3e50;
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
