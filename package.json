@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/JoshHouse/Weather_Group_Joseph#readme",
   "dependencies": {
+    "axios": "^1.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
