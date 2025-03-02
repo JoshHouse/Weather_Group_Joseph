@@ -1,82 +1,101 @@
-/* App.css */
-.app-container {
-  display: flex;
-}
-
-.sidebar {
-  width: 200px;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  height: 100vh;
-}
-
-.sidebar button {
-  width: 100%;
-  padding: 10px;
-  background-color: #34495e;
-  border: none;
-  color: white;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.sidebar button:hover {
-  background-color: #2c3e50;
-}
-
-.content {
-  flex-grow: 1;
-  padding: 20px;
-}
-
-/* WeatherComparisonMenu.css */
-.comparison-menu {
-  padding: 20px;
-}
-
 .weather-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+
+.top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 20px;
 }
 
-.location-input input {
-  width: 100%;
-  padding: 10px;
+.location {
+  font-size: 28px;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
-.location-input button {
-  padding: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
+.forecast-gap {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: gray;
+  border: 1px dashed gray;
+  margin-bottom: 20px;
 }
 
-.location-input button:hover {
-  background-color: #2980b9;
+.columns-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.weather-details {
-  margin-top: 10px;
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 30%;
+  margin-bottom: 20px;
 }
 
-.compare-button {
-  padding: 10px 20px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-top: 20px;
+.middle-column {
+  width: 35%;
+  text-align: center;
 }
 
-.compare-button:hover {
-  background-color: #c0392b;
+.left-column p,
+.right-column p,
+.middle-column p {
+  margin-bottom: 10px;
 }
 
-.comparison-result {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.middle-column .condition-container,
+.middle-column .wind-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.middle-column .condition,
+.middle-column .description,
+.middle-column .wind-speed,
+.middle-column .wind-direction,
+.middle-column .wind-gust {
+  margin-bottom: 10px;
+}
+
+.middle-column .condition,
+.middle-column .wind-speed,
+.right-column .temperature,
+.left-column .sunrise,
+.left-column .sunset {
+  font-size: 20px;
+}
+
+.image-gap {
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: gray;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+}
+
+.image-gap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
