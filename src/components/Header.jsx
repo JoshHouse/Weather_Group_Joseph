@@ -1,44 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Search } from "lucide-react";
 
 const Header = () => {
-  const [location, setLocation] = useState("New York");
+  const [location, setLocation] = useState(""); // Start empty
   const [weather, setWeather] = useState(null);
-  const API_KEY = "6fd23365cb0cff93a229f133b710d825";
+
+  const fetchWeather = async (city) => {
+    if (!city) return; // Prevent empty requests
+
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/weather/${city}`);
+      const data = await response.json();
+
+      if (data.error) {
+        setWeather(null);
+      } else {
+        setWeather(data);
+      }
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+    }
+  };
 
   useEffect(() => {
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`
-    )
-      .then((response) => response.json())
-      .then((data) => setWeather(data));
+    fetchWeather(location); // Fetch when location changes
   }, [location]);
 
   return (
     <header className="bg-blue-600 p-4 flex items-center justify-between text-white shadow-lg">
-      {/* Logo Placeholder */}
-      <div className="text-xl font-bold">Logo</div>
+      <div className="text-xl font-bold">Weather Dashboard</div>
       
-      {/* Search Bar & Dropdown */}
+      {/* Search Input */}
       <div className="flex items-center space-x-2">
-        <Select onValueChange={(value) => setLocation(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a city" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="New York">New York</SelectItem>
-            <SelectItem value="London">London</SelectItem>
-            <SelectItem value="Tokyo">Tokyo</SelectItem>
-            <SelectItem value="Paris">Paris</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input type="text" placeholder="Search city..." className="px-4 py-2" />
-        <Search className="text-white" />
+        <Input
+          type="text"
+          placeholder="Enter city/state..."
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="px-4 py-2"
+        />
+        <Search className="text-white cursor-pointer" onClick={() => fetchWeather(location)} />
       </div>
       
-      {/* Current Weather */}
+      {/* Weather Info */}
       {weather && (
         <div className="text-right">
           <p className="text-lg font-semibold">{weather.name}</p>
