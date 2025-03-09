@@ -20,8 +20,10 @@
   },
   "homepage": "https://github.com/JoshHouse/Weather_Group_Joseph#readme",
   "dependencies": {
+    "lucide-react": "^0.479.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.8",
