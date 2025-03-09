@@ -1,6 +1,5 @@
 // Components/WeatherComparisonMenu.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import './WeatherComparisonMenu.css';
 
 const WeatherComparisonMenu = () => {
@@ -8,34 +7,24 @@ const WeatherComparisonMenu = () => {
   const [weatherData, setWeatherData] = useState([null, null]);
   const [comparisonResult, setComparisonResult] = useState(null);
 
-  const apiKey = '24106620cbdbd0abf71e61d0ebf6ed83';
-
   const fetchWeatherData = async (location, index) => {
-    try {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=imperial`
-      );
+    // Replace with actual API call
+    const mockData = {
+      city: 'Sample City',
+      state: 'Sample State',
+      temp: '72°F',
+      feelsLike: '70°F',
+      condition: 'Clear',
+      windDirection: 'NW',
+      windSpeed: '5 mph',
+      sunset: '6:30 PM',
+      uvIndex: '3',
+      airQuality: 'Good'
+    };
 
-      const weatherInfo = {
-        city: response.data.name,
-        state: response.data.sys.country, // Assuming country as state for simplicity
-        temp: `${response.data.main.temp}°F`,
-        feelsLike: `${response.data.main.feels_like}°F`,
-        condition: response.data.weather[0].description,
-        windDirection: 'N/A', // OpenWeather API does not provide wind direction directly
-        windSpeed: `${response.data.wind.speed} mph`,
-        sunset: new Date(response.data.sys.sunset * 1000).toLocaleTimeString(),
-        uvIndex: 'N/A', // UV Index is available in a different API endpoint
-        airQuality: 'N/A' // Air Quality is available in a different API endpoint
-      };
-
-      const newWeatherData = [...weatherData];
-      newWeatherData[index] = weatherInfo;
-      setWeatherData(newWeatherData);
-    } catch (error) {
-      console.error('Error fetching weather data:', error);
-      alert('Error fetching weather data. Please try again.');
-    }
+    const newWeatherData = [...weatherData];
+    newWeatherData[index] = mockData;
+    setWeatherData(newWeatherData);
   };
 
   const handleAddLocation = (index) => {
