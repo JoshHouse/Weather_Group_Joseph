@@ -3,34 +3,50 @@ import React, { useState } from 'react';
 import WeatherConditionsPage from './Components/WeatherConditionsPage';
 import WeatherComparisonMenu from './Components/WeatherComparisonMenu';
 import WeeklyForecast from './Components/WeeklyForecast';
+import Sidebar from './Components/Sidebar';
+import Header from './Components/Header';
 import './App.css';
 
 function App() {
-  const [activePage, setActivePage] = useState('home');
+  // const [activePage, setActivePage] = useState('home');
 
-  const renderPage = () => {
-    switch (activePage) {
-      case 'compare':
-        return <WeatherComparisonMenu />;
-      case 'forecast':
-        return <WeeklyForecast city = "London" />;
-      case 'home':
-      default:
-        return <WeatherConditionsPage />;
-    }
-  };
+  // const renderPage = () => {
+  //   switch (activePage) {
+  //     case 'compare':
+  //       return <WeatherComparisonMenu />;
+  //     case 'forecast':
+  //       return <WeeklyForecast city = "London" />;
+  //     case 'home':
+  //     default:
+  //       return <WeatherConditionsPage />;
+  //   }
+  // };
 
   return (
-    <div className="app-container">
-      <div className="sidebar">
-        <h2>Weather App</h2>
-        <button onClick={() => setActivePage('home')}>Home</button>
-        <button onClick={() => setActivePage('settings')}>Settings</button>
-        <button onClick={() => setActivePage('forecast')}>Weekly Forecast</button>
-        <button onClick={() => setActivePage('compare')}>Compare Statistics</button>
+    <div id="app-container">
+      
+      <div id="top-bar">
+        
+        <div id="exit-button">
+
+        </div>
+
+        <div id="header-bar">
+          <Header />;
+        </div>
+
       </div>
-      <div className="content">
-        {renderPage()}
+
+      <div id="bottom-content-and-sidebar">
+        
+        <div id="side-bar">
+          <Sidebar />
+        </div>
+
+        <div id="content-page">
+          <WeatherConditionsPage />
+        </div>
+
       </div>
     </div>
   );
