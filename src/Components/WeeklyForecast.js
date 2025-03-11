@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./WeeklyForecast.css";
 import cloudyIcon from "../assets/images/cloudy.png";
 import rainIcon from "../assets/images/rain.png";
@@ -14,32 +15,53 @@ const weatherIcons = {
   Thunderstorm: thunderIcon
 };
 
-function WeeklyForecast({ city }) {
-  const [forecast, setForecast] = useState([
-    {
-      date: "2025-03-01",
-      temperature: { day: 72, min: 60, max: 75, night: 65, eve: 68, morn: 62 },
-      weather: "Clear",
-      description: "Sunny day with no clouds",
-      humidity: 50,
-      wind_speed: 5,
-    },
-    {
-      date: "2025-03-02",
-      temperature: { day: 70, min: 58, max: 73, night: 63, eve: 67, morn: 60 },
-      weather: "Clouds",
-      description: "Partly cloudy with mild winds",
-      humidity: 55,
-      wind_speed: 7,
-    }
-  ]);
+function WeeklyForecast({ city = "London" }) {
+  const [forecast, setForecast] = useState([]);
   const [detailedView, setDetailedView] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchForecast = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await axios.get(`http://127.0.0.1:5000/api/forecast?city=${city}`);
+        setForecast(response.data);
+      } catch (err) {
+        console.error("Error fetching forecast:", err);
+        setError("Failed to load forecast data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchForecast();
+  }, [city]);
+
+  // Format date to be more readable
+  const formatDate = (dateString) => {
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  if (loading) {
+    return <div className="loading-message">Loading forecast data...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  if (!forecast || forecast.length === 0) {
+    return <div className="no-data-message">No forecast data available</div>;
+  }
 
   return (
     <div className="weather-details-container">
       <div className="top-section">
         <h2 className="location">Weekly Forecast for {city}</h2>
-        <div className="forecast-gap">[ Weekly Forecast Goes Here ]</div>
       </div>
 
       <button className="expand-button" onClick={() => setDetailedView(!detailedView)}>
@@ -49,15 +71,15 @@ function WeeklyForecast({ city }) {
       <div className={detailedView ? "detailed-view" : "compact-view"}>
         {forecast.map((day, index) => (
           <div key={index} className="forecast-day">
-            <p>{day.date}</p>
+            <p>{formatDate(day.date)}</p>
             <img src={weatherIcons[day.weather] || cloudyIcon} alt={day.weather} />
             <p><strong>{day.weather}</strong></p>
-            <p>{day.temperature.day}°F</p>
+            <p>{Math.round(day.temperature.day)}°F</p>
             {detailedView && (
               <div className="detailed-info">
-                <p>Min: {day.temperature.min}°F</p>
-                <p>Max: {day.temperature.max}°F</p>
-                <p>Night: {day.temperature.night}°F</p>
+                <p>Min: {Math.round(day.temperature.min)}°F</p>
+                <p>Max: {Math.round(day.temperature.max)}°F</p>
+                <p>Night: {Math.round(day.temperature.night)}°F</p>
                 <p>Humidity: {day.humidity}%</p>
                 <p>Wind Speed: {day.wind_speed} mph</p>
               </div>
