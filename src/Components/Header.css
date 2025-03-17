@@ -1,0 +1,62 @@
+/* Styling for entire header */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #9bb2b5;
+    width: 100%;
+    height: 100%;
+    color: white;
+    padding-left: 1%;
+}
+
+/* Style for Logo container */
+.logo-container {
+    height: 100%;
+}
+
+/* Style for Logo */
+.logo-container img {
+    width: auto;
+    height: 100%;
+}
+
+/* Stile for search bar container */
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 20px;
+    width: 30%;
+}
+
+/* Style for Input section of search bar */
+.search-input {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    color: #34495e;
+}
+
+/* Style for the hourglass icon */
+.search-icon {
+    cursor: pointer;
+    padding-right: 1%;
+    color: #34495e;
+}
+
+/* Style for current weather conditions at your current location (Container) */
+/* Temporarily displays as london by default */
+.weather-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    font-size: 16px;
+    gap: 10%;
+}
+
+/* Style for Weather info */
+.weather-location, .weather-description, .weather-temperature {
+    color: white;
+}
