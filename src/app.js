@@ -1,79 +1,70 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import WeatherConditionsPage from "./Components/WeatherConditionsPage";
 import WeatherComparisonMenu from "./Components/WeatherComparisonMenu";
 import WeeklyForecast from "./Components/WeeklyForecast";
-import SettingsPage from "./Components/SettingsPage";
+import Sidebar from "./Components/Sidebar";
+import Header from "./Components/Header";
+import ExitButton from "./Components/ExitButton"; 
+import HomePage from "./Components/HomePage";
 import "./App.css";
 
+// App function
 function App() {
-    const [activePage, setActivePage] = useState("home");
-    const [weather, setWeather] = useState(null);
-    const [settings, setSettings] = useState({
-        units: "imperial",
-        defaultCity: "London",
-        theme: "light"
-    });
+  // State to hold active pages to switch between them
+  const [activePage, setActivePage] = useState("home");
+  // State to hold the city for searching purposes
+  const [city, setCity] = useState("London"); 
 
-    // Fetch settings on initial load
-    useEffect(() => {
-        axios.get("http://127.0.0.1:5000/api/settings")
-            .then(response => {
-                setSettings(response.data);
-                // Apply theme
-                document.body.className = response.data.theme === "dark" ? "dark-theme" : "light-theme";
-            })
-            .catch(error => console.error("Error fetching settings:", error));
-    }, []);
+  // Render page function to switch active page to different components based on type of call
+  const renderPage = () => {
+    switch (activePage) {
+      case "searched": // Called by handleSearch function called in Header.js
+        return <WeatherConditionsPage city={city}/>;
+      case "compare": // Called when Compare button is pressed on the sidebar
+        return <WeatherComparisonMenu city={city}/>;
+      case "forecast": // Called when forecast button is pressed on the sidebar
+        return <WeeklyForecast city={city} />;
+      case "settings": // Called when settings button is pressed on the sidebar
+        return <div style={{color: '#34495e'}}>Settings Page</div>; // placeholder settings page
+      case "home":  // Called when home or exit are pressed
+        return <HomePage city={city}/>
+      default: // Called by default
+        return <HomePage city={city}/>;
+    }
+  };
 
-    // Fetch weather data for the current city
-    useEffect(() => {
-        if (settings.defaultCity) {
-            axios.get(`http://127.0.0.1:5000/api/weather?city=${settings.defaultCity}`)
-                .then(response => setWeather(response.data))
-                .catch(error => console.error("Error fetching weather data:", error));
-        }
-    }, [settings.defaultCity]);
+  // Updates city to the searched city from the header component
+  const handleSearch = (searchedCity) => {
+    setCity(searchedCity);
+    setActivePage("searched"); // Change to the weather conditions page after search
+  };
 
-    const renderPage = () => {
-        switch (activePage) {
-            case "compare":
-                return <WeatherComparisonMenu />;
-            case "forecast":
-                return <WeeklyForecast city={settings.defaultCity} />;
-            case "settings":
-                return <SettingsPage />;
-            case "home":
-            default:
-                return (
-                    <div>
-                        <WeatherConditionsPage city={settings.defaultCity} />
-                        {weather ? (
-                            <div className="weather-info">
-                                <h2>{weather.name}</h2>
-                                <p>Temperature: {weather.temperature}°{settings.units === "imperial" ? "F" : "C"}</p>
-                                <p>Condition: {weather.weather}</p>
-                            </div>
-                        ) : (
-                            <p>Loading weather data...</p>
-                        )}
-                    </div>
-                );
-        }
-    };
-
-    return (
-        <div className={`app-container ${settings.theme === "dark" ? "dark-theme" : "light-theme"}`}>
-            <div className="sidebar">
-                <h2>Weather App</h2>
-                <button onClick={() => setActivePage("home")}>Home</button>
-                <button onClick={() => setActivePage("settings")}>Settings</button>
-                <button onClick={() => setActivePage("forecast")}>Weekly Forecast</button>
-                <button onClick={() => setActivePage("compare")}>Compare Statistics</button>
-            </div>
-            <div className="content">{renderPage()}</div>
+  return (
+    <div id="app-container"> {/* App wrapper div */}
+      <div id="top-bar"> {/* header bar and exit button wrapper div */}
+        <div id="exit-button">  {/* exit button wrapper div */}
+          {/* Pass setActivePage as a prop */}
+          <ExitButton onExit={() => setActivePage("home")} />
         </div>
-    );
+
+        <div id="header-bar"> {/* header bar wrapper div */}
+          {/* pass handleSearch so header can access it */}
+          <Header onSearch={handleSearch} />
+        </div>
+      </div>
+
+      <div id="bottom-content-and-sidebar"> {/* Sidebar and content page wrapper div */}
+        <div id="side-bar"> {/* sidebar wrapper div */}
+          {/* Pass setActivePage function to Sidebar */}
+          <Sidebar setActivePage={setActivePage} />
+        </div>
+        
+        <div id="content-page">{renderPage()}</div> {/* content-page wrapper div calling renderPage function */}
+      </div>
+    </div>
+  );
 }
 
+
 export default App;
+
