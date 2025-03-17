@@ -6,6 +6,11 @@
     height: 100%;
     background-color: #9bb2b5; 
     color: white;
+    border-width: 0 2px 0 0; 
+    border-style: solid;
+    border-color: #34495e;
+    box-sizing: border-box;
+    object-fit: cover;
 }
 
 /* Button Styling */

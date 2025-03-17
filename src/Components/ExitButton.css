@@ -7,10 +7,15 @@
 }
 
 .exit-logo {
-  width: auto; /* Adjust size as needed */
+  width: auto; 
   height: 100%;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  border-width: 0 2px 2px 0; 
+  border-style: solid;
+  border-color: #34495e;
+  box-sizing: border-box;
+  object-fit: cover;
 }
 
 .exit-logo:hover {
