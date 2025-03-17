@@ -1,58 +1,56 @@
-// Import necessary libraries
-import React, { useState, useEffect } from "react"; // React hooks: useState for managing state, useEffect for handling side effects
-import "./WeatherConditionsPage.css"; // Import Component CSS styling
+import React, { useState, useEffect } from "react";
+import "./WeatherConditionsPage.css";
 import rainImage from "../assets/images/rain.png"; // Import rain placeholder image
 
-function WeatherConditionsPage() {
-  // State hooks to store weather data and the city name
-  const [weatherData, setWeatherData] = useState(null); // State stores weather data (null initially)
-  const [city, setCity] = useState("London"); // State stores the city name (default to "London")
-  
-  // My API key for OpenWeather *DO NOT USE*
-  const apiKey = "a7ecb5d8aaa97f57473de04085971f14"; 
+// Passes in city from app.js to implement search functionality
+function WeatherConditionsPage({ city }) {
+  // State to store weather data
+  const [weatherData, setWeatherData] = useState('London');
 
-  // useEffect hook to run the weather data fetching function when the component mounts or when the city changes
+  // My API key *DO NOT USE*
+  const apiKey = "a7ecb5d8aaa97f57473de04085971f14";
+
+  // Function called when component is mounted or when city is updated
   useEffect(() => {
-    // Function to fetch weather data from OpenWeatherMap API
+    // fetchWeatherData based on city set on passed in city from app.js
     const fetchWeatherData = () => {
-      // Constructing the URL to make the API call
+      // Constructs url
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
 
-      // Fetching the weather data from the API
+      // Makes a call to the api
       fetch(url)
         .then(response => {
-          // If the response is not OK, throw an error
+          // Throws an error if response is !okay
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          // Parse the JSON response
           return response.json();
         })
         .then(data => {
-          // Set the state with the weather data
+          // Sets weather data to response from API
           setWeatherData({
-            name: data.name, // City name
-            weather: data.weather[0].main, // General weather condition (e.g. Rain)
-            description: data.weather[0].description, // Detailed description of the weather condition (e.g. light rain)
-            temperature: data.main.temp, // Current temperature in Fahrenheit (due to 'units=imperial' in the URL)
-            feels_like: data.main.feels_like, // Feels like temperature in Fahrenheit (due to 'units=imperial' in the URL)
-            temp_max: data.main.temp_max, // Maximum temperature for the day in Fahrenheit (due to 'units=imperial' in the URL)
-            temp_min: data.main.temp_min, // Minimum temperature for the day in Fahrenheit (due to 'units=imperial' in the URL)
-            wind_speed: data.wind.speed, // Wind speed in miles per hour (due to 'units=imperial' in the URL)
-            wind_direction: data.wind.deg, // Wind direction in degrees (0-360, where 0 = North)
-            wind_gust: data.wind.gust || 0, // Wind gust speed in miles per hour (default to 0 if not available)
-            sunrise: data.sys.sunrise, // Sunrise time in Unix timestamp
-            sunset: data.sys.sunset, // Sunset time in Unix timestamp
+            name: data.name,
+            weather: data.weather[0].main,
+            description: data.weather[0].description,
+            temperature: data.main.temp,
+            feels_like: data.main.feels_like,
+            temp_max: data.main.temp_max,
+            temp_min: data.main.temp_min,
+            wind_speed: data.wind.speed,
+            wind_direction: data.wind.deg,
+            wind_gust: data.wind.gust || 0,
+            sunrise: data.sys.sunrise,
+            sunset: data.sys.sunset,
           });
         })
-        .catch(error => console.error("Error fetching weather:", error)); // Log any errors encountered
+        // Catch any errors encountered
+        .catch(error => console.error("Error fetching weather:", error));
     };
 
-    fetchWeatherData(); // Call the function to fetch weather data
+    // Call the fetchWeatherData function
+    fetchWeatherData();
+  }, [city]); // Fetch data when the city changes
 
-  }, [city]); // Re-run this effect whenever the 'city' state changes
-
-  // If weather data is not yet available, show a loading message
   if (!weatherData) {
     return <div>Loading weather data...</div>;
   }

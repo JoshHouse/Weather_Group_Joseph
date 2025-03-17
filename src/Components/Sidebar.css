@@ -1,16 +1,18 @@
+/* Side Bar Styling */
 #sidebar-Container {
     display: flex;
     flex-direction: column; /* Stack elements vertically */
     width: 100%; /* Ensure it takes the full width */
     height: 100%;
-    background-color: #dee8f3; /* Example sidebar color */
+    background-color: #9bb2b5; /* Example sidebar color */
     color: white;
 }
-  
+
+/* Button Styling */
 #sidebar-Container button {
     width: 100%; /* Make buttons take full width */
     padding: 10px;
-    margin: 5px 0; /* Space between buttons */
+    margin: 5% 0; /* Space between buttons */
     border: none;
     background-color: #34495e; /* Example button color */
     color: white;
@@ -18,7 +20,8 @@
     cursor: pointer;
     border-radius: 5px;
 }
-  
+ 
+/* Hover Color */
 #sidebar-Container button:hover {
     background-color: #2c3e50;
 }
