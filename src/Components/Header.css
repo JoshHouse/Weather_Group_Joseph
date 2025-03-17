@@ -14,6 +14,7 @@
     border-color: #34495e;
     box-sizing: border-box;
     object-fit: cover;
+    box-shadow: 5px 0 15px grey;
 }
 
 /* Stile for search bar container */
