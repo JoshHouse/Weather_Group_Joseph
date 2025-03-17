@@ -44,7 +44,7 @@ body {
 /* Content page and sidebar styling */
 #bottom-content-and-sidebar {
   display: flex;
-  flex: 1; 
+  height: 88vh;
 }
 
 /* Sidebar styling */
