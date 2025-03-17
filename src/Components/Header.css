@@ -7,18 +7,8 @@
     width: 100%;
     height: 100%;
     color: white;
-    padding-left: 1%;
-}
-
-/* Style for Logo container */
-.logo-container {
-    height: 100%;
-}
-
-/* Style for Logo */
-.logo-container img {
-    width: auto;
-    height: 100%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 /* Stile for search bar container */
@@ -58,5 +48,5 @@
 
 /* Style for Weather info */
 .weather-location, .weather-description, .weather-temperature {
-    color: white;
+    color: #34495e;
 }

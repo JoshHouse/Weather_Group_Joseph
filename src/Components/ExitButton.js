@@ -1,11 +1,16 @@
 import React from 'react';
 import './ExitButton.css';
+import WGJLogo from '../assets/images/WGJLogo.png'; 
 
 function ExitButton({ onExit }) {
     return (
-        <button className="exit-button" onClick={onExit}>Exit</button> // Pass On Exit to app.js
+        <img 
+            src={WGJLogo} 
+            alt="Home" 
+            className="exit-logo" 
+            onClick={onExit} 
+        />
     );
-
-};
+}
 
 export default ExitButton;
