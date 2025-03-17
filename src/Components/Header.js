@@ -87,10 +87,6 @@ const Header = ({ onSearch }) => {
                 <p className="weather-temperature"><strong>Temperature: </strong>{locationData.temperature}°F</p>
             </div>
 
-            <div className="logo-container"> {/* Logo Wrapper Div */}
-                <img src={WGJLogo} alt="Logo" className="logo" />
-            </div>
-
         </header>
     );
 };
