@@ -9,6 +9,11 @@
     color: white;
     padding-left: 2%;
     padding-right: 2%;
+    border-width: 0 0 2px 0; 
+    border-style: solid;
+    border-color: #34495e;
+    box-sizing: border-box;
+    object-fit: cover;
 }
 
 /* Stile for search bar container */
