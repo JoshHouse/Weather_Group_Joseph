@@ -1,56 +1,57 @@
-/* Make the whole page take the full viewport height */
+/* App container styling */
 #app-container {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Full height of the screen */
+  height: 100%; 
   width: 100%;
 }
 
-/* Top bar taking 15% of the viewport height */
+/* Exit button and header bar styling */
 #top-bar {
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 12vh; /* 15% of the screen height */
+  height: 12vh;
 }
 
-/* Exit button size */
+/* exit button styling */
 #exit-button {
-  width: 15%; /* Adjust as needed */
-  height: 100%; /* Same height as the top-bar */
-  background-color: #3498db; /* Example color */
+  width: 15%;
+  height: 100%; 
+  display: flex;
+  align-items: center;
+  background-color: #9bb2b5; 
 }
 
-/* Header takes up the remaining space next to exit button */
+/* Header Bar styling */
 #header-bar {
-  flex: 1; /* Takes up the remaining space */
+  flex: 1; 
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  background-color: #dee8f3; /* Example color */
+  background-color: #9bb2b5; 
 }
 
-/* Bottom section taking the rest of the screen */
+/* Content page and sidebar styling */
 #bottom-content-and-sidebar {
   display: flex;
-  flex: 1; /* Takes the remaining space (85%) */
+  flex: 1; 
 }
 
-/* Sidebar occupies 25% of width */
+/* Sidebar styling */
 #side-bar {
   width: 15%;
-  background-color: #2c3e50; /* Example color */
+  background-color: #2c3e50; 
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Content page occupies 75% of width */
+/* Content page styling */
 #content-page {
-  flex: 1; /* Takes the remaining space */
-  background-color: #ecf0f1; /* Example color */
+  flex: 1; 
+  background-color: #ecf0f1; 
   display: flex;
   align-items: center;
   justify-content: center;
