@@ -6,6 +6,7 @@ import Sidebar from "./Components/Sidebar";
 import Header from "./Components/Header";
 import ExitButton from "./Components/ExitButton"; 
 import HomePage from "./Components/HomePage";
+import SettingsPage from "./Components/SettingsPage";
 import "./App.css";
 
 // App function
@@ -25,7 +26,7 @@ function App() {
       case "forecast": // Called when forecast button is pressed on the sidebar
         return <WeeklyForecast city={city} />;
       case "settings": // Called when settings button is pressed on the sidebar
-        return <div style={{color: '#34495e'}}>Settings Page</div>; // placeholder settings page
+        return <SettingsPage />; // placeholder settings page
       case "home":  // Called when home or exit are pressed
         return <HomePage city={city}/>
       default: // Called by default

@@ -83,8 +83,7 @@ function SettingsPage() {
             id="units" 
             name="units" 
             value={settings.units} 
-            onChange={handleChange}
-          >
+            onChange={handleChange}>
             <option value="imperial">Fahrenheit (°F)</option>
             <option value="metric">Celsius (°C)</option>
           </select>
