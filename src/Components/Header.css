@@ -30,7 +30,9 @@
 .search-input {
     width: 100%;
     border: none;
+    font-size: 2vh;
     border-radius: 10px;
+    padding: 1%;
     color: #34495e;
 }
 
@@ -48,7 +50,8 @@
     justify-content: space-between;
     align-items: center;
     text-align: right;
-    font-size: 16px;
+    width: 60%;
+    font-size: 2.5vh;
     gap: 10%;
 }
 
