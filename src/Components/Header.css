@@ -3,25 +3,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #9bb2b5;
+    background-color: var(--secondary1-color);
     width: 100%;
     height: 100%;
-    color: white;
     padding-left: 2%;
     padding-right: 2%;
     border-width: 0 0 2px 0; 
     border-style: solid;
-    border-color: #34495e;
+    border-color: var(--primary1-color);
     box-sizing: border-box;
     object-fit: cover;
-    box-shadow: 5px 0 15px grey;
+    box-shadow: 5px 0 15px var(--shadow-color);
 }
 
 /* Stile for search bar container */
 .search-container {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--page-color);
     border-radius: 20px;
     width: 30%;
 }
@@ -33,14 +32,15 @@
     font-size: 2vh;
     border-radius: 10px;
     padding: 1%;
-    color: #34495e;
+    background-color: var(--page-color);
+    color: var(--text-dark-color);
 }
 
 /* Style for the hourglass icon */
 .search-icon {
     cursor: pointer;
     padding-right: 1%;
-    color: #34495e;
+    color: var(--text-dark-color);
 }
 
 /* Style for current weather conditions at your current location (Container) */
@@ -57,5 +57,5 @@
 
 /* Style for Weather info */
 .weather-location, .weather-description, .weather-temperature {
-    color: #34495e;
+    color: var(--text-dark-color);
 }

@@ -13,7 +13,7 @@
   transition: opacity 0.3s ease;
   border-width: 0 2px 2px 0; 
   border-style: solid;
-  border-color: #34495e;
+  border-color: var(--primary1-color);
   box-sizing: border-box;
   object-fit: cover;
 }

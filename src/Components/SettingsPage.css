@@ -6,9 +6,8 @@
 }
 
 .settings-container h2 {
-  color: #34495e;
+  color: var(--text-dark-color);
   margin-bottom: 20px;
-  border-bottom: 2px solid #eee;
   padding-bottom: 10px;
   font-size: 4vh;
   font-weight: bold;
@@ -17,15 +16,15 @@
 
 .settings-section {
   margin-bottom: 30px;
-  background-color: #9bb2b5;
+  background-color: var(--secondary1-color);
   border-radius: 8px;
   padding: 15px;
-  box-shadow: 5px 5px 15px grey;
+  box-shadow: 5px 5px 15px var(--shadow-color);
 }
 
 .settings-section h3 {
   margin-top: 0;
-  color: #34495e;
+  color: var(--text-dark-color);
   font-size: 3vh;
   margin-bottom: 15px;
   font-weight: bold;
@@ -37,15 +36,15 @@
   align-items: center;
   margin: 1%;
   padding: 1%;
-  background-color: white;
+  background-color: var(--page-color);
   border-radius: 4px;
-  box-shadow: 5px 5px 15px grey;
+  box-shadow: 5px 5px 15px var(--shadow-color);
 }
 
 .setting-item label {
   font-size: 2vh;
   font-weight: bold;
-  color: #34495e;
+  color: var(--text-dark-color);
   width: 20%;
 }
 
@@ -55,14 +54,15 @@
   padding: 1%;
   border-radius: 4px;
   font-size: 2vh;
-  color: #34495e;
+  background-color: var(--page-color);
+  color: var(--text-dark-color);
 }
 
 .setting-item input:focus,
 .setting-item select:focus {
   outline: none;
-  border-color: #34495e;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  border-color: var(--primary1-color);
+  box-shadow: 5px 5px 15px var(--shadow-color);
 }
 
 .settings-actions {
@@ -72,8 +72,8 @@
 }
 
 .save-button {
-  background-color: #34495e;
-  color: white;
+  background-color: var(--primary1-color);
+  color: var(--text-light-color);
   border: none;
   padding: 1%;
   width: 20%;
@@ -84,11 +84,11 @@
 }
 
 .save-button:hover {
-  background-color: #2c3e50;
+  background-color: var(--primary2-color);
 }
 
 .save-button:disabled {
-  background-color: #a0c0e8;
+  background-color: var(--secondary1-color);
   cursor: not-allowed;
 }
 
@@ -96,47 +96,7 @@
   margin-top: 10px;
   padding: 10px;
   border-radius: 4px;
-  background-color: #e6f7e6;
-  color: #2e7d32;
+  background-color: var(--page-color);
+  color: var(--text-dark-color);
   font-size: 0.9rem;
-}
-
-/* Dark theme support */
-body.dark-theme .settings-container {
-  background-color: #222;
-  color: #34495e;
-}
-
-body.dark-theme .settings-container h2 {
-  color: #34495e;
-  border-bottom-color: #444;
-}
-
-body.dark-theme .settings-section {
-  background-color: #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-theme .settings-section h3 {
-  color: #34495e;
-}
-
-body.dark-theme .setting-item {
-  background-color: #444;
-}
-
-body.dark-theme .setting-item label {
-  color: #34495e;
-}
-
-body.dark-theme .setting-item input,
-body.dark-theme .setting-item select {
-  background-color: #555;
-  border-color: #666;
-  color: #34495e;
-}
-
-body.dark-theme .save-message {
-  background-color: #1b5e20;
-  color: #34495e;
 }

@@ -14,7 +14,6 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 2%; 
-  color: #34495e;
 }
 
 /* Location name title styling */
@@ -22,6 +21,7 @@
   font-size: 4vh;
   font-weight: bold;
   margin-bottom: 2%;
+  color: var(--text-dark-color);
 }
 
 /* Forcast gap styling */
@@ -32,8 +32,8 @@
   align-items: center;
   justify-content: center;
   font-size: 3vh;
-  color: #34495e;
-  border: 1px dashed gray; 
+  color: var(--primary1-color);
+  border: 1px dashed var(--primary1-color); 
 }
 
 /* Weather Info styling */
@@ -65,7 +65,7 @@
 .middle-column p {
   margin-bottom: 2%;
   font-size: 2.2vh;
-  color: #34495e;
+  color: var(--text-dark-color);
 }
 
 /* Middle column condition and wind styling */
@@ -74,7 +74,7 @@
   display: flex;
   flex-direction: column; 
   margin-bottom: 2%;
-  color: #34495e;
+  color: var(--text-dark-color);
 }
 
 /* Middle Column text styling */
@@ -84,7 +84,7 @@
 .middle-column .wind-direction,
 .middle-column .wind-gust {
   margin-bottom: 2%;
-  color: #34495e;
+  color: var(--text-dark-color);
 }
 
 /* Info Column Text Styling */
@@ -94,7 +94,7 @@
 .left-column .sunrise,
 .left-column .sunset {
   font-size: 2.6vh;
-  color: #34495e;
+  color: var(--text-dark-color);
 }
 
 /* Image Gap Styling */
@@ -105,7 +105,7 @@
   align-items: center;
   justify-content: center;
   font-size: 2vh;
-  color: #34495e;
+  color: var(--text-dark-color);
   margin-bottom: 4%;
   margin-left: auto;
   margin-right: auto;
