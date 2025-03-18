@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import './Header.css';
-import WGJLogo from "../assets/images/WGJLogo.png"; // Import Logo
 
 // onSearch function passed from app.js to set app.js's searched city for current weather conditions page
 const Header = ({ onSearch }) => {
