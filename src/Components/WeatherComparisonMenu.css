@@ -74,6 +74,7 @@
 
 .location-input button:disabled {
   background-color: var(--secondary1-color);
+  color: var(--text-dark-color);
   cursor: not-allowed;
 }
 
