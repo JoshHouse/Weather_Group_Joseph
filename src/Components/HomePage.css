@@ -11,7 +11,7 @@
 #Title {
     padding-top: 1%;
     padding-bottom: 1%;
-    color: #34495e;
+    color: var(--text-dark-color);
     font-size: 36px;  /* Adjust the font size for the title */
     font-weight: bold;  /* Optional: make the title bold */
     text-align: center;  /* Ensure the title is centered */
