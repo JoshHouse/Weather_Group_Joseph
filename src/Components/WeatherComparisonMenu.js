@@ -1,45 +1,62 @@
-// Components/WeatherComparisonMenu.js
-import React, { useState } from 'react';
-import axios from 'axios';
-import './WeatherComparisonMenu.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "./WeatherComparisonMenu.css";
+
+// Import weather background GIFs
+import cloudyGif from "../Assets/images/Cloudy.gif";
+import rainGif from "../Assets/images/Rain.gif";
+import snowGif from "../Assets/images/Snow.gif";
+import sunnyGif from "../Assets/images/Sunny.gif";
+import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
+
+// Function to get the appropriate weather background GIF
+function getWeatherBackground(weatherCondition) {
+  if (!weatherCondition) return sunnyGif;
+  const condition = weatherCondition.toLowerCase();
+
+  if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("fog") || condition.includes("mist")) {
+    return cloudyGif;
+  } else if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("shower")) {
+    return rainGif;
+  } else if (condition.includes("snow") || condition.includes("sleet") || condition.includes("hail") || condition.includes("ice")) {
+    return snowGif;
+  } else if (condition.includes("thunder") || condition.includes("storm") || condition.includes("lightning")) {
+    return thunderstormsGif;
+  } else {
+    return sunnyGif;
+  }
+}
 
 const WeatherComparisonMenu = () => {
-  const [locations, setLocations] = useState(['', '']);
+  const [locations, setLocations] = useState(["", ""]);
   const [weatherData, setWeatherData] = useState([null, null]);
   const [comparisonResult, setComparisonResult] = useState(null);
   const [loading, setLoading] = useState([false, false]);
   const [error, setError] = useState(null);
 
   const fetchWeatherData = async (location, index) => {
-    if (!location.trim()) {
-      return;
-    }
-    
-    // Update loading state for this index
+    if (!location.trim()) return;
+
     const newLoading = [...loading];
     newLoading[index] = true;
     setLoading(newLoading);
-    
     setError(null);
-    
+
     try {
-      // Call our backend API
       const response = await axios.get(`http://127.0.0.1:5000/api/weather?city=${location}`);
-      
-      // Format the data for display
+
       const formattedData = {
         city: response.data.name,
         temp: `${Math.round(response.data.temperature)}°F`,
         feelsLike: `${Math.round(response.data.feels_like)}°F`,
         condition: response.data.weather,
-        windDirection: `${response.data.wind_direction}°`,
         windSpeed: `${response.data.wind_speed} mph`,
-        sunset: new Date(response.data.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        uvIndex: '3', // Placeholder - would need a separate API call
-        airQuality: 'Good' // Placeholder - would need a separate API call
+        windDirection: `${response.data.wind_direction}°`,
+        sunset: new Date(response.data.sunset * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        uvIndex: "3", // Placeholder
+        airQuality: "Good", // Placeholder
       };
-      
-      // Update weather data for this index
+
       const newWeatherData = [...weatherData];
       newWeatherData[index] = formattedData;
       setWeatherData(newWeatherData);
@@ -47,8 +64,6 @@ const WeatherComparisonMenu = () => {
       console.error(`Error fetching weather for ${location}:`, err);
       setError(`Failed to fetch data for ${location}. Please check the city name and try again.`);
     } finally {
-      // Update loading state
-      const newLoading = [...loading];
       newLoading[index] = false;
       setLoading(newLoading);
     }
@@ -66,93 +81,55 @@ const WeatherComparisonMenu = () => {
   const handleCompareStatistics = () => {
     const [data1, data2] = weatherData;
     if (data1 && data2) {
-      // Calculate temperature difference
       const temp1 = parseFloat(data1.temp);
       const temp2 = parseFloat(data2.temp);
       const tempDiff = Math.abs(temp1 - temp2).toFixed(1);
-      
-      const result = {
+
+      setComparisonResult({
         tempDifference: `${data1.temp} vs ${data2.temp} (${tempDiff}°F difference)`,
         feelsLikeDifference: `${data1.feelsLike} vs ${data2.feelsLike}`,
         conditionComparison: `${data1.condition} vs ${data2.condition}`,
         windSpeedComparison: `${data1.windSpeed} vs ${data2.windSpeed}`,
         uvIndexComparison: `${data1.uvIndex} vs ${data2.uvIndex}`,
-        airQualityComparison: `${data1.airQuality} vs ${data2.airQuality}`
-      };
-      setComparisonResult(result);
+        airQualityComparison: `${data1.airQuality} vs ${data2.airQuality}`,
+      });
     } else {
-      setError('Please add two locations to compare.');
+      setError("Please add two locations to compare.");
     }
   };
 
-  // Clear a location
   const handleClearLocation = (index) => {
     const newLocations = [...locations];
-    newLocations[index] = '';
+    newLocations[index] = "";
     setLocations(newLocations);
-    
+
     const newWeatherData = [...weatherData];
     newWeatherData[index] = null;
     setWeatherData(newWeatherData);
-    
-    // Clear comparison result if either location is cleared
-    setComparisonResult(null);
-  };
 
-  // Compare both locations using the backend API
-  const handleCompareWithAPI = async () => {
-    if (!locations[0] || !locations[1]) {
-      setError('Please enter both locations to compare.');
-      return;
-    }
-    
-    setLoading([true, true]);
-    setError(null);
-    
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:5000/api/compare?city1=${locations[0]}&city2=${locations[1]}`
-      );
-      
-      // Update both weather data entries
-      setWeatherData(response.data);
-      
-      // Generate comparison result
-      if (response.data.length === 2) {
-        const [data1, data2] = response.data;
-        
-        // Extract temperature values for difference calculation
-        const temp1 = parseFloat(data1.temp);
-        const temp2 = parseFloat(data2.temp);
-        const tempDiff = Math.abs(temp1 - temp2).toFixed(1);
-        
-        const result = {
-          tempDifference: `${data1.temp} vs ${data2.temp} (${tempDiff}°F difference)`,
-          feelsLikeDifference: `${data1.feelsLike} vs ${data2.feelsLike}`,
-          conditionComparison: `${data1.condition} vs ${data2.condition}`,
-          windSpeedComparison: `${data1.windSpeed} vs ${data2.windSpeed}`,
-          uvIndexComparison: `${data1.uvIndex} vs ${data2.uvIndex}`,
-          airQualityComparison: `${data1.airQuality} vs ${data2.airQuality}`
-        };
-        setComparisonResult(result);
-      }
-    } catch (err) {
-      console.error('Error comparing locations:', err);
-      setError('Failed to compare locations. Please check city names and try again.');
-    } finally {
-      setLoading([false, false]);
-    }
+    setComparisonResult(null);
   };
 
   return (
     <div className="comparison-menu">
       <h2>Compare Weather Between Cities</h2>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <div className="locations-container">
         {weatherData.map((data, index) => (
-          <div key={index} className="weather-container">
+          <div
+            key={index}
+            className="weather-container"
+            style={data ? {
+              backgroundImage: `url(${getWeatherBackground(data.condition)})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              color: "#ffffff",
+              textShadow: "1px 1px 3px rgba(0, 0, 0, 0.8)",
+            } : {}}
+          >
             <div className="location-input">
               <input
                 type="text"
@@ -165,17 +142,11 @@ const WeatherComparisonMenu = () => {
                 }}
               />
               <div className="input-buttons">
-                <button 
-                  onClick={() => handleAddLocation(index)}
-                  disabled={loading[index] || !locations[index].trim()}
-                >
+                <button onClick={() => handleAddLocation(index)} disabled={loading[index]}>
                   {loading[index] ? "Loading..." : `Add Location ${index + 1}`}
                 </button>
                 {data && (
-                  <button 
-                    onClick={() => handleClearLocation(index)}
-                    className="clear-button"
-                  >
+                  <button onClick={() => handleClearLocation(index)} className="clear-button">
                     Clear
                   </button>
                 )}
@@ -199,25 +170,13 @@ const WeatherComparisonMenu = () => {
           </div>
         ))}
       </div>
-      
+
       <div className="comparison-actions">
-        <button 
-          onClick={handleCompareWithAPI} 
-          className="compare-button"
-          disabled={loading.some(isLoading => isLoading)}
-        >
-          Compare Cities
-        </button>
-        
-        <button 
-          onClick={handleCompareStatistics} 
-          className="compare-button"
-          disabled={!weatherData[0] || !weatherData[1]}
-        >
+        <button onClick={handleCompareStatistics} className="compare-button" disabled={!weatherData[0] || !weatherData[1]}>
           Compare Statistics
         </button>
       </div>
-      
+
       {comparisonResult && (
         <div className="comparison-result">
           <h3>Comparison Result</h3>
