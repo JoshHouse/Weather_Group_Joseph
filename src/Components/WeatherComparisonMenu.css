@@ -47,10 +47,21 @@
 .location-input input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+}
+
+.location-input-help {
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 12px;
+}
+
+.location-input-help small {
+  display: block;
+  line-height: 1.4;
 }
 
 .input-buttons {
@@ -157,6 +168,30 @@
   margin-bottom: 15px;
 }
 
+.comparison-result h4 {
+  color: #3498db;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.temperature-comparison {
+  background-color: #f1f9f1;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #27ae60;
+}
+
+.temp-diff-highlight {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #27ae60;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
 .result-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -216,6 +251,20 @@ body.dark-theme .comparison-result {
 
 body.dark-theme .comparison-result h3 {
   color: #a9dfbf;
+}
+
+body.dark-theme .comparison-result h4 {
+  color: #5dade2;
+  border-top-color: #444;
+}
+
+body.dark-theme .temperature-comparison {
+  background-color: #1e3d1e;
+  border-left-color: #27ae60;
+}
+
+body.dark-theme .temp-diff-highlight {
+  color: #2ecc71;
 }
 
 body.dark-theme .error-message {

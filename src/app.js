@@ -14,7 +14,7 @@ function App() {
   // State to hold active pages to switch between them
   const [activePage, setActivePage] = useState("home");
   // State to hold the city for searching purposes
-  const [city, setCity] = useState("London"); 
+  const [city, setCity] = useState("");
 
   // Render page function to switch active page to different components based on type of call
   const renderPage = () => {
@@ -22,15 +22,13 @@ function App() {
       case "searched": // Called by handleSearch function called in Header.js
         return <WeatherConditionsPage city={city}/>;
       case "compare": // Called when Compare button is pressed on the sidebar
-        return <WeatherComparisonMenu city={city}/>;
-      case "forecast": // Called when forecast button is pressed on the sidebar
-        return <WeeklyForecast city={city} />;
+        return <WeatherComparisonMenu />;
       case "settings": // Called when settings button is pressed on the sidebar
         return <SettingsPage />; // placeholder settings page
       case "home":  // Called when home or exit are pressed
-        return <HomePage city={city}/>
+        return <HomePage />
       default: // Called by default
-        return <HomePage city={city}/>;
+        return <HomePage />;
     }
   };
 

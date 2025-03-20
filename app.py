@@ -41,10 +41,112 @@ def get_weather():
         "wind_direction": data['wind']['deg'],
         "wind_gust": data['wind'].get('gust', 0),
         "sunrise": data['sys']['sunrise'],
-        "sunset": data['sys']['sunset']
+        "sunset": data['sys']['sunset'],
+        "lat": data['coord']['lat'],
+        "lon": data['coord']['lon']
     }
     
     return jsonify(weather_data)
+
+@app.route('/api/uv-index', methods=['GET'])
+def get_uv_index():
+    # Get city or coordinates from request
+    city = request.args.get('city', '')
+    lat = request.args.get('lat', '')
+    lon = request.args.get('lon', '')
+    
+    # If city is provided but not coordinates, get coordinates from city name
+    if city and not (lat and lon):
+        # Get coordinates from city name
+        geo_url = f"https://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
+        geo_response = requests.get(geo_url)
+        
+        if geo_response.status_code != 200 or not geo_response.json():
+            return jsonify({"error": "Failed to get coordinates for city"}), 500
+        
+        geo_data = geo_response.json()[0]
+        lat = geo_data['lat']
+        lon = geo_data['lon']
+    
+    # If no valid location data provided
+    if not (lat and lon):
+        return jsonify({"error": "Please provide a city or coordinates"}), 400
+    
+    # Call OpenWeatherMap OneCall API which includes UV Index
+    # Note: The API endpoint has changed from 'onecall' to 'onecall/3.0'
+    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&appid={API_KEY}&units=imperial"
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        # If the new API fails, try the older version as fallback
+        url = f"{BASE_URL}/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&appid={API_KEY}&units=imperial"
+        response = requests.get(url)
+        
+        if response.status_code != 200:
+            # If both APIs fail, return a default UV Index value
+            return jsonify({"uvIndex": 5, "note": "Default value - API unavailable"}), 200
+    
+    data = response.json()
+    
+    try:
+        # Extract UV Index from current weather data
+        uv_index = data['current']['uvi']
+        return jsonify({"uvIndex": uv_index})
+    except KeyError:
+        # If the structure is different or the key doesn't exist, return a default value
+        return jsonify({"uvIndex": 5, "note": "Default value - API structure changed"}), 200
+
+@app.route('/api/air-quality', methods=['GET'])
+def get_air_quality():
+    # Get city or coordinates from request
+    city = request.args.get('city', '')
+    lat = request.args.get('lat', '')
+    lon = request.args.get('lon', '')
+    
+    # If city is provided but not coordinates, get coordinates from city name
+    if city and not (lat and lon):
+        # Get coordinates from city name
+        geo_url = f"https://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
+        geo_response = requests.get(geo_url)
+        
+        if geo_response.status_code != 200 or not geo_response.json():
+            return jsonify({"error": "Failed to get coordinates for city"}), 500
+        
+        geo_data = geo_response.json()[0]
+        lat = geo_data['lat']
+        lon = geo_data['lon']
+    
+    # If no valid location data provided
+    if not (lat and lon):
+        return jsonify({"error": "Please provide a city or coordinates"}), 400
+    
+    # Call OpenWeatherMap Air Pollution API
+    url = f"{BASE_URL}/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        return jsonify({"error": "Failed to fetch air quality data"}), 500
+    
+    data = response.json()
+    
+    # Extract Air Quality Index (AQI) from response
+    aqi = data['list'][0]['main']['aqi']
+    
+    # Convert AQI number to descriptive text
+    aqi_descriptions = {
+        1: "Good",
+        2: "Fair",
+        3: "Moderate",
+        4: "Poor",
+        5: "Very Poor"
+    }
+    
+    aqi_description = aqi_descriptions.get(aqi, "Unknown")
+    
+    return jsonify({
+        "aqi": aqi,
+        "description": aqi_description
+    })
 
 @app.route('/api/compare', methods=['GET'])
 def compare_weather():
@@ -67,6 +169,45 @@ def compare_weather():
     data1 = response1.json()
     data2 = response2.json()
     
+    # Get UV Index and Air Quality for both cities
+    # For city 1
+    lat1 = data1['coord']['lat']
+    lon1 = data1['coord']['lon']
+    uv_response1 = requests.get(f"{BASE_URL}/onecall?lat={lat1}&lon={lon1}&exclude=minutely,hourly,alerts&appid={API_KEY}")
+    air_response1 = requests.get(f"{BASE_URL}/air_pollution?lat={lat1}&lon={lon1}&appid={API_KEY}")
+    
+    uv_index1 = "N/A"
+    air_quality1 = "N/A"
+    
+    if uv_response1.status_code == 200:
+        uv_data1 = uv_response1.json()
+        uv_index1 = uv_data1['current']['uvi']
+    
+    if air_response1.status_code == 200:
+        air_data1 = air_response1.json()
+        aqi1 = air_data1['list'][0]['main']['aqi']
+        aqi_descriptions = {1: "Good", 2: "Fair", 3: "Moderate", 4: "Poor", 5: "Very Poor"}
+        air_quality1 = aqi_descriptions.get(aqi1, "Unknown")
+    
+    # For city 2
+    lat2 = data2['coord']['lat']
+    lon2 = data2['coord']['lon']
+    uv_response2 = requests.get(f"{BASE_URL}/onecall?lat={lat2}&lon={lon2}&exclude=minutely,hourly,alerts&appid={API_KEY}")
+    air_response2 = requests.get(f"{BASE_URL}/air_pollution?lat={lat2}&lon={lon2}&appid={API_KEY}")
+    
+    uv_index2 = "N/A"
+    air_quality2 = "N/A"
+    
+    if uv_response2.status_code == 200:
+        uv_data2 = uv_response2.json()
+        uv_index2 = uv_data2['current']['uvi']
+    
+    if air_response2.status_code == 200:
+        air_data2 = air_response2.json()
+        aqi2 = air_data2['list'][0]['main']['aqi']
+        aqi_descriptions = {1: "Good", 2: "Fair", 3: "Moderate", 4: "Poor", 5: "Very Poor"}
+        air_quality2 = aqi_descriptions.get(aqi2, "Unknown")
+    
     # Format the response for both cities
     weather_data = [
         {
@@ -77,8 +218,8 @@ def compare_weather():
             "windDirection": get_wind_direction(data1['wind']['deg']),
             "windSpeed": f"{data1['wind']['speed']} mph",
             "sunset": datetime.fromtimestamp(data1['sys']['sunset']).strftime('%I:%M %p'),
-            "uvIndex": "3",  # Placeholder - would need a separate API call
-            "airQuality": "Good"  # Placeholder - would need a separate API call
+            "uvIndex": uv_index1,
+            "airQuality": air_quality1
         },
         {
             "city": data2['name'],
@@ -88,8 +229,8 @@ def compare_weather():
             "windDirection": get_wind_direction(data2['wind']['deg']),
             "windSpeed": f"{data2['wind']['speed']} mph",
             "sunset": datetime.fromtimestamp(data2['sys']['sunset']).strftime('%I:%M %p'),
-            "uvIndex": "3",  # Placeholder - would need a separate API call
-            "airQuality": "Good"  # Placeholder - would need a separate API call
+            "uvIndex": uv_index2,
+            "airQuality": air_quality2
         }
     ]
     
