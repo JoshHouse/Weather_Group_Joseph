@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Search } from "lucide-react";
 import './Header.css';
-import WGJLogo from "../Assets/images/WGJLogo.png"; 
-import { API_BASE_URL, API_ENDPOINTS } from "../utils/weatherUtils";
+import WGJLogo from "../assets/images/WGJLogo.png"; // Import Logo
 
 const Header = ({ onSearch }) => {
     const [locationData, setLocationData] = useState({
@@ -93,9 +92,10 @@ const Header = ({ onSearch }) => {
                 )}
             </div>
 
-            <div className="logo-container">
+            <div className="logo-container"> {/* Logo Wrapper Div */}
                 <img src={WGJLogo} alt="Logo" className="logo" />
             </div>
+
         </header>
     );
 };

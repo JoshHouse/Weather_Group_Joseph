@@ -3,29 +3,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #9bb2b5;
+    background-color: var(--secondary1-color);
     width: 100%;
     height: 100%;
-    color: white;
-    padding-left: 1%;
-}
-
-/* Style for Logo container */
-.logo-container {
-    height: 100%;
-}
-
-/* Style for Logo */
-.logo-container img {
-    width: auto;
-    height: 100%;
+    padding-left: 2%;
+    padding-right: 2%;
+    border-width: 0 0 2px 0; 
+    border-style: solid;
+    border-color: var(--primary1-color);
+    box-sizing: border-box;
+    object-fit: cover;
+    box-shadow: 5px 0 15px var(--shadow-color);
 }
 
 /* Style for search bar container */
 .search-container {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--page-color);
     border-radius: 20px;
     width: 30%;
     position: relative;
@@ -35,16 +30,9 @@
 .search-input {
     width: 100%;
     border: none;
+    font-size: 2vh;
     border-radius: 10px;
     color: #34495e;
-    padding: 8px 12px;
-}
-
-/* Style for search controls container */
-.search-controls {
-    display: flex;
-    align-items: center;
-    padding-right: 10px;
 }
 
 /* Style for the info icon */
@@ -57,6 +45,7 @@
 /* Style for the search icon */
 .search-icon {
     cursor: pointer;
+    padding-right: 1%;
     color: #34495e;
 }
 
@@ -96,11 +85,12 @@
     justify-content: space-between;
     align-items: center;
     text-align: right;
-    font-size: 16px;
+    width: 60%;
+    font-size: 2.5vh;
     gap: 10%;
 }
 
 /* Style for Weather info */
 .weather-location, .weather-description, .weather-temperature {
-    color: white;
+    color: var(--text-dark-color);
 }

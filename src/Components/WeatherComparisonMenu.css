@@ -7,20 +7,19 @@
 }
 
 .comparison-menu h2 {
-  color: #333;
+  color: var(--text-dark-color);
   margin-bottom: 20px;
   text-align: center;
-  border-bottom: 2px solid #eee;
   padding-bottom: 10px;
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(var(--primary1-rgb), .5);
+  color: var(--text-dark-color);
   padding: 10px 15px;
   border-radius: 4px;
   margin-bottom: 15px;
-  border-left: 4px solid #c62828;
+  border-left: 4px solid var(--primary2-color);
 }
 
 .locations-container {
@@ -71,8 +70,8 @@
 
 .location-input button {
   padding: 10px;
-  background-color: #34495e;
-  color: white;
+  background-color: var(--primary1-color);
+  color: var(--text-light-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -81,20 +80,21 @@
 }
 
 .location-input button:hover {
-  background-color: #2c3e50;
+  background-color: var(--primary2-color);
 }
 
 .location-input button:disabled {
-  background-color: #9bb2b5;
+  background-color: var(--secondary1-color);
+  color: var(--text-dark-color);
   cursor: not-allowed;
 }
 
 .clear-button {
-  background-color: #34495e !important;
+  background-color: var(--primary1-color) !important;
 }
 
 .clear-button:hover {
-  background-color: #2c3e50 !important;
+  background-color: var(--primary2-color) !important;
 }
 
 .weather-details {
@@ -251,20 +251,6 @@ body.dark-theme .comparison-result {
 
 body.dark-theme .comparison-result h3 {
   color: #a9dfbf;
-}
-
-body.dark-theme .comparison-result h4 {
-  color: #5dade2;
-  border-top-color: #444;
-}
-
-body.dark-theme .temperature-comparison {
-  background-color: #1e3d1e;
-  border-left-color: #27ae60;
-}
-
-body.dark-theme .temp-diff-highlight {
-  color: #2ecc71;
 }
 
 body.dark-theme .error-message {
