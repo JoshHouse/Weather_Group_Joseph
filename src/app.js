@@ -13,17 +13,17 @@ export const ThemeContext = createContext();
 
 // App function
 function App() {
+  console.log("App component rendering");
   // State to hold active pages to switch between them
   const [activePage, setActivePage] = useState("home");
   // State to hold the city for searching purposes
   const [city, setCity] = useState("London"); 
-  // State to hold the theme for light and dark theme functionality
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  // State to hold the theme (light or dark)
+  const [theme, setTheme] = useState("light");
 
-  // Use Effect function to change theme colors when the app mounts or when the theme changes
+  // Apply theme class to body when component mounts and when theme changes
   useEffect(() => {
     document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
-    localStorage.setItem("theme", theme);
   }, [theme]);
 
   // Render page function to switch active page to different components based on type of call
@@ -32,15 +32,13 @@ function App() {
       case "searched": // Called by handleSearch function called in Header.js
         return <WeatherConditionsPage city={city}/>;
       case "compare": // Called when Compare button is pressed on the sidebar
-        return <WeatherComparisonMenu city={city}/>;
-      case "forecast": // Called when forecast button is pressed on the sidebar
-        return <WeeklyForecast city={city} />;
+        return <WeatherComparisonMenu />;
       case "settings": // Called when settings button is pressed on the sidebar
         return <SettingsPage setTheme={setTheme} theme={theme} />; // Settings page passes theme to app.js
       case "home":  // Called when home or exit are pressed
-        return <HomePage city={city}/>
+        return <HomePage />
       default: // Called by default
-        return <HomePage city={city}/>;
+        return <HomePage />;
     }
   };
 

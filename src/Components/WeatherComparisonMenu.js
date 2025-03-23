@@ -2,6 +2,36 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './WeatherComparisonMenu.css';
+// Import weather background GIFs
+import cloudyGif from "../Assets/images/Cloudy.gif";
+import rainGif from "../Assets/images/Rain.gif";
+import snowGif from "../Assets/images/Snow.gif";
+import sunnyGif from "../Assets/images/Sunny.gif";
+import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
+
+// Function to get the appropriate weather background GIF based on the weather condition
+function getWeatherBackground(weatherCondition) {
+  if (!weatherCondition) return sunnyGif;
+  
+  // Convert to lowercase for case-insensitive matching
+  const condition = weatherCondition.toLowerCase();
+  
+  // Map weather conditions to their corresponding background GIFs
+  if (condition.includes('cloud') || condition.includes('overcast') || condition.includes('fog') || condition.includes('mist')) {
+    return cloudyGif;
+  } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
+    return rainGif;
+  } else if (condition.includes('snow') || condition.includes('sleet') || condition.includes('hail') || condition.includes('ice')) {
+    return snowGif;
+  } else if (condition.includes('thunder') || condition.includes('storm') || condition.includes('lightning')) {
+    return thunderstormsGif;
+  } else if (condition.includes('clear') || condition.includes('sun') || condition.includes('fair')) {
+    return sunnyGif;
+  } else {
+    // Default to sunny if condition doesn't match any known patterns
+    return sunnyGif;
+  }
+}
 
 const WeatherComparisonMenu = () => {
   const [locations, setLocations] = useState(['', '']);
@@ -152,7 +182,18 @@ const WeatherComparisonMenu = () => {
       
       <div className="locations-container">
         {weatherData.map((data, index) => (
-          <div key={index} className="weather-container">
+          <div 
+            key={index} 
+            className="weather-container"
+            style={data ? {
+              backgroundImage: `url(${getWeatherBackground(data.condition)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              color: '#ffffff',
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)'
+            } : {}}
+          >
             <div className="location-input">
               <input
                 type="text"
@@ -182,8 +223,8 @@ const WeatherComparisonMenu = () => {
               </div>
             </div>
             {data && (
-              <div className="weather-details">
-                <h3>{data.city}</h3>
+              <div className="weather-details" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '8px', padding: '15px' }}>
+                <h3 style={{ color: '#ffffff' }}>{data.city}</h3>
                 <div className="details-grid">
                   <p><strong>Temperature:</strong> {data.temp}</p>
                   <p><strong>Feels Like:</strong> {data.feelsLike}</p>
@@ -219,9 +260,16 @@ const WeatherComparisonMenu = () => {
       </div>
       
       {comparisonResult && (
-        <div className="comparison-result">
-          <h3>Comparison Result</h3>
-          <div className="result-grid">
+        <div className="comparison-result" style={{ 
+          backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${getWeatherBackground(weatherData[0]?.condition)}), url(${getWeatherBackground(weatherData[1]?.condition)})`,
+          backgroundSize: '50% 100%, 50% 100%',
+          backgroundPosition: 'left top, right top',
+          backgroundRepeat: 'no-repeat',
+          color: '#ffffff',
+          textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)'
+        }}>
+          <h3 style={{ color: '#ffffff' }}>Comparison Result</h3>
+          <div className="result-grid" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '8px', padding: '10px' }}>
             <p><strong>Temperature:</strong> {comparisonResult.tempDifference}</p>
             <p><strong>Feels Like:</strong> {comparisonResult.feelsLikeDifference}</p>
             <p><strong>Condition:</strong> {comparisonResult.conditionComparison}</p>

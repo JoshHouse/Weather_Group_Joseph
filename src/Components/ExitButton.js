@@ -1,6 +1,6 @@
 import React from 'react';
 import './ExitButton.css';
-import WGJLogo from '../assets/images/WGJLogo.png'; 
+import WGJLogo from '../Assets/images/WGJLogo.png'; 
 
 function ExitButton({ onExit }) {
     return (

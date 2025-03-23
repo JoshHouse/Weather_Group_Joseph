@@ -1,76 +1,117 @@
-import React, { useState, useEffect } from "react";
-import "./WeatherConditionsPage.css";
-import rainImage from "../assets/images/rain.png"; // Import rain placeholder image
+// Import necessary libraries
+import React, { useState, useEffect } from "react"; // React hooks: useState for managing state, useEffect for handling side effects
+import axios from "axios"; // For making HTTP requests
+import "./WeatherConditionsPage.css"; // Import Component CSS styling
+// Import weather background GIFs
+import cloudyGif from "../Assets/images/Cloudy.gif";
+import rainGif from "../Assets/images/Rain.gif";
+import snowGif from "../Assets/images/Snow.gif";
+import sunnyGif from "../Assets/images/Sunny.gif";
+import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
 
-// Passes in city from app.js to implement search functionality
-function WeatherConditionsPage({ city }) {
-  // State to store weather data
-  const [weatherData, setWeatherData] = useState('London');
+// Function to get the appropriate weather background GIF based on the weather condition
+function getWeatherBackground(weatherCondition) {
+  // Convert to lowercase for case-insensitive matching
+  const condition = weatherCondition.toLowerCase();
+  
+  // Map weather conditions to their corresponding background GIFs
+  if (condition.includes('cloud') || condition.includes('overcast') || condition.includes('fog') || condition.includes('mist')) {
+    return cloudyGif;
+  } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
+    return rainGif;
+  } else if (condition.includes('snow') || condition.includes('sleet') || condition.includes('hail') || condition.includes('ice')) {
+    return snowGif;
+  } else if (condition.includes('thunder') || condition.includes('storm') || condition.includes('lightning')) {
+    return thunderstormsGif;
+  } else if (condition.includes('clear') || condition.includes('sun') || condition.includes('fair')) {
+    return sunnyGif;
+  } else {
+    // Default to sunny if condition doesn't match any known patterns
+    return sunnyGif;
+  }
+}
 
-  // My API key *DO NOT USE*
-  const apiKey = "a7ecb5d8aaa97f57473de04085971f14";
+function WeatherConditionsPage({ city = "London", weatherData: propWeatherData = null }) {
+  // State hook to store weather data
+  const [weatherData, setWeatherData] = useState(propWeatherData); // Initialize with prop data if provided
+  const [loading, setLoading] = useState(propWeatherData === null); // Only set loading to true if we need to fetch data
+  const [error, setError] = useState(null); // State to track any errors
 
-  // Function called when component is mounted or when city is updated
+  // useEffect hook to run the weather data fetching function when the component mounts or when the city changes
   useEffect(() => {
-    // fetchWeatherData based on city set on passed in city from app.js
-    const fetchWeatherData = () => {
-      // Constructs url
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+    // If weather data was provided as a prop, no need to fetch
+    if (propWeatherData) {
+      setWeatherData(propWeatherData);
+      setLoading(false);
+      return;
+    }
 
-      // Makes a call to the api
-      fetch(url)
-        .then(response => {
-          // Throws an error if response is !okay
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          // Sets weather data to response from API
-          setWeatherData({
-            name: data.name,
-            weather: data.weather[0].main,
-            description: data.weather[0].description,
-            temperature: data.main.temp,
-            feels_like: data.main.feels_like,
-            temp_max: data.main.temp_max,
-            temp_min: data.main.temp_min,
-            wind_speed: data.wind.speed,
-            wind_direction: data.wind.deg,
-            wind_gust: data.wind.gust || 0,
-            sunrise: data.sys.sunrise,
-            sunset: data.sys.sunset,
-          });
-        })
-        // Catch any errors encountered
-        .catch(error => console.error("Error fetching weather:", error));
+    // Function to fetch weather data from our backend API
+    const fetchWeatherData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Make request to our Flask backend
+        const response = await axios.get(`http://127.0.0.1:5000/api/weather?city=${city}`);
+        setWeatherData(response.data);
+      } catch (err) {
+        console.error("Error fetching weather:", err);
+        setError("Failed to load weather data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    // Call the fetchWeatherData function
-    fetchWeatherData();
-  }, [city]); // Fetch data when the city changes
+    fetchWeatherData(); // Call the function to fetch weather data
 
+  }, [city, propWeatherData]); // Re-run this effect whenever the city or propWeatherData changes
+
+  // If loading, show a loading message
+  if (loading) {
+    return <div className="loading-message">Loading weather data...</div>;
+  }
+
+  // If there was an error, show error message
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  // If weather data is not yet available, show a loading message
   if (!weatherData) {
     return <div className="loading-message">No weather data available</div>;
   }
 
   return (
     
-    <div className="weather-container"> {/* Container to hold weather Conditions page */}
+    <div 
+      className="weather-container"
+      style={{ 
+        backgroundImage: `url(${getWeatherBackground(weatherData.weather)})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        color: '#ffffff', // Bright text color for better visibility
+        textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)', // Text shadow for better readability
+        padding: '30px',
+        borderRadius: '10px',
+      }}
+    > {/* Container to hold weather Conditions page with dynamic background */}
       
-      <div className="top-section"> {/* Container to hold Location name and forcast above columns */}
+      <div className="top-section" style={{ color: '#ffffff' }}> {/* Container to hold Location name above columns */}
         
-        <h2 className="location">{weatherData.name}</h2> {/* Display the city name */}
-        <div className="forecast-gap"> {/* Placeholder for weekly forecast */}
-          [ Weekly Forecast Goes Here ]
-          </div> {/* Forecast-gap end */} 
+        <h2 className="location" style={{ color: '#ffffff', fontSize: '32px' }}>{weatherData.name}</h2> {/* Display the city name */}
       
       </div> {/* Top-Section end */}
 
       <div className="columns-container"> {/* Container to hold the bottom 3 columns */}
         
-        <div className="left-column"> {/* Left Column Container - Displays sunrise, sunset, UV index, and air quality */}
+        <div className="left-column" style={{ 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          padding: '15px', 
+          borderRadius: '8px',
+          color: '#ffffff'
+        }}> {/* Left Column Container - Displays sunrise, sunset, UV index, and air quality */}
           
           {/* Convert sunrise Unix timestamp to human-readable time using .toLocalTimeString() */}
           <p className="sunrise"><strong>Sunrise:</strong> {new Date(weatherData.sunrise * 1000).toLocaleTimeString()}</p> 
@@ -83,7 +124,12 @@ function WeatherConditionsPage({ city }) {
         
         </div> {/* Left-Column end */}
 
-        <div className="middle-column"> {/* Middle Column Container - Displays general weather condition, description, and wind data */}
+        <div className="middle-column" style={{ 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          padding: '15px', 
+          borderRadius: '8px',
+          color: '#ffffff'
+        }}> {/* Middle Column Container - Displays general weather condition, description, and wind data */}
           
           <div className="condition-container"> {/* Conditions container to combine Weather condition and description */}
             
@@ -92,11 +138,7 @@ function WeatherConditionsPage({ city }) {
           
           </div> {/* Condition-Container end */}
 
-          <div className="image-gap"> {/* Container to hold the weather image */}
-            
-            <img src={rainImage} alt="Weather Icon" /> {/* Image representing the weather condition (rain image as placeholder) */}
-          
-          </div>{/* image-gap end */}
+          {/* Weather image section removed */}
 
           <div className="wind-container"> {/* Wind container to combine wind speed, direction, and gust */}
             
@@ -109,7 +151,12 @@ function WeatherConditionsPage({ city }) {
         
         </div> {/* Middle-Column end */}
 
-        <div className="right-column">{/* Right Column Container - Displays temperature-related data */}
+        <div className="right-column" style={{ 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          padding: '15px', 
+          borderRadius: '8px',
+          color: '#ffffff'
+        }}>{/* Right Column Container - Displays temperature-related data */}
           
           {/* Temperature Stats display in Fahrenheit (due to 'units=imperial' in the URL) */}
           <p className="temperature"><strong>Current Temperature:</strong> {weatherData.temperature}°F</p> {/* Displays Current temperature */}

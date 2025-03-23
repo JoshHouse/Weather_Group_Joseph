@@ -1,14 +1,101 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./HomePage.css";
-import WGJLogo from "../assets/images/WGJLogo.png"; // Import Logo
+import GoogleMapComponent from "./GoogleMapComponent";
+import { API_BASE_URL, API_ENDPOINTS, formatLocationQuery } from "../utils/weatherUtils.js";
 
-function HomePage() {
-  return (
-    <div id='Home-Page-Container'> {/* Home Page Wrapper */}
-        <div id='Title'>Home Page Placeholder</div>
-        <img id='logo' src={WGJLogo} alt="Logo"></img>
-    </div>
+function HomePage({ searchedCity }) {
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [coordinates, setCoordinates] = useState(null);
+
+  useEffect(() => {
+    if (searchedCity) {
+      const fetchWeatherData = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+          const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.WEATHER}?city=${searchedCity}`);
+          setWeatherData(response.data);
+          
+          // If the API response includes coordinates, update the state
+          if (response.data.lat && response.data.lon) {
+            setCoordinates({
+              lat: response.data.lat,
+              lng: response.data.lon
+            });
+          } else {
+            // Reset coordinates if not available
+            setCoordinates(null);
+          }
+        } catch (err) {
+          console.error("Error fetching weather:", err);
+          setError("Failed to load weather data. Please try again later.");
+          setCoordinates(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchWeatherData();
+    }
+  }, [searchedCity]);
+
+  // Handle location selection from the map
+  const handleLocationSelect = (newCoordinates) => {
+    setCoordinates(newCoordinates);
     
+    // Fetch weather data for the selected location
+    const fetchWeatherForCoordinates = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const locationQuery = formatLocationQuery(`${newCoordinates.lat},${newCoordinates.lng}`);
+        const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.WEATHER}?city=${locationQuery}`);
+        setWeatherData(response.data);
+      } catch (err) {
+        console.error("Error fetching weather for coordinates:", err);
+        setError("Failed to load weather data for the selected location.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeatherForCoordinates();
+  };
+
+  return (
+    <div id='Home-Page-Container'>
+      <div className="home-header">
+        <h1>Weather Map</h1>
+      </div>
+
+      {loading ? (
+        <div className="loading-message">Loading map data...</div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : (
+        <div className="map-container">
+          <GoogleMapComponent 
+            city={weatherData?.name || searchedCity || "Default Location"}
+            coordinates={coordinates}
+            onLocationSelect={handleLocationSelect}
+          />
+          <p className="map-instruction">Click on the map to check weather at a different location</p>
+          
+          {weatherData && (
+            <div className="weather-info-minimal">
+              <h2>{weatherData.name}</h2>
+              <p className="temp-value">{Math.round(weatherData.temperature)}°F</p>
+              <p className="condition">{weatherData.weather}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

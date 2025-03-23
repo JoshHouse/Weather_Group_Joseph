@@ -8,7 +8,6 @@ function Sidebar({ setActivePage }) {
       {/* Buttons Calling the passed in setActivePage function from app.js */}
       <button onClick={() => setActivePage("home")}>Home</button>
       <button onClick={() => setActivePage("settings")}>Settings</button>
-      <button onClick={() => setActivePage("forecast")}>Weekly Forecast</button>
       <button onClick={() => setActivePage("compare")}>Compare Statistics</button>
     </div>
   );

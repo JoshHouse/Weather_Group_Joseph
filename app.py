@@ -17,10 +17,19 @@ def home():
 
 @app.route('/api/weather', methods=['GET'])
 def get_weather():
-    city = request.args.get('city', 'London')  # Default to London if no city provided
+    # Check if latitude and longitude are provided
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
     
     # Call OpenWeatherMap API
-    url = f"{BASE_URL}/weather?q={city}&appid={API_KEY}&units=imperial"
+    if lat and lon:
+        # Use coordinates if provided
+        url = f"{BASE_URL}/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=imperial"
+    else:
+        # Fall back to city name
+        city = request.args.get('city', 'London')  # Default to London if no city provided
+        url = f"{BASE_URL}/weather?q={city}&appid={API_KEY}&units=imperial"
+    
     response = requests.get(url)
     
     if response.status_code != 200:
