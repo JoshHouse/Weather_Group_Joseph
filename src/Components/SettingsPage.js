@@ -1,14 +1,11 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ThemeContext } from "../app";
 import "./SettingsPage.css";
 
-function SettingsPage() {
-  const { theme, setTheme } = useContext(ThemeContext);
+function SettingsPage({ theme, setTheme }) {
   const [settings, setSettings] = useState({
     units: "imperial",
-    defaultCity: "London",
-    theme: theme,
+    defaultCity: "London"
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
@@ -16,27 +13,52 @@ function SettingsPage() {
   // Fetch current settings from backend
   useEffect(() => {
     axios.get("http://127.0.0.1:5000/api/settings")
-      .then(response => {setSettings(response.data);})
-      .catch(error => {console.error("Error fetching settings:", error);});
+      .then(response => {
+        setSettings(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching settings:", error);
+      });
   }, []);
 
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prevSettings => ({
-      ...prevSettings,
-      [name]: value
-    }));
-    if (name === "theme") setTheme(value);
+    if (name === "theme") {
+      setTheme(value);
+    } else {
+      setSettings(prevSettings => ({
+        ...prevSettings,
+        [name]: value
+      }));
+    }
   };
 
   // Save settings to backend
   const handleSave = () => {
-    const handleSave = () => {
-      axios.post("http://127.0.0.1:5000/api/settings", settings)
-        .then(() => alert("Settings saved!"))
-        .catch(() => alert("Failed to save settings."));
+    setIsSaving(true);
+    setSaveMessage("");
+
+    const settingsToSave = {
+      ...settings,
+      theme: theme
     };
+
+    axios.post("http://127.0.0.1:5000/api/settings", settingsToSave)
+      .then(response => {
+        setSaveMessage("Settings saved successfully!");
+        // Apply theme change
+        document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
+      })
+      .catch(error => {
+        console.error("Error saving settings:", error);
+        setSaveMessage("Failed to save settings. Please try again.");
+      })
+      .finally(() => {
+        setIsSaving(false);
+        // Clear message after 3 seconds
+        setTimeout(() => setSaveMessage(""), 3000);
+      });
   };
 
   return (
@@ -48,7 +70,12 @@ function SettingsPage() {
         
         <div className="setting-item">
           <label htmlFor="theme">Theme:</label>
-          <select id="theme" name="theme" value={settings.theme} onChange={handleChange}>
+          <select 
+            id="theme" 
+            name="theme" 
+            value={theme}
+            onChange={handleChange}
+          >
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
@@ -64,7 +91,8 @@ function SettingsPage() {
             id="units" 
             name="units" 
             value={settings.units} 
-            onChange={handleChange}>
+            onChange={handleChange}
+          >
             <option value="imperial">Fahrenheit (°F)</option>
             <option value="metric">Celsius (°C)</option>
           </select>
@@ -84,9 +112,19 @@ function SettingsPage() {
       </div>
 
       <div className="settings-actions">
-        <button onClick={handleSave} className="save-button">Save Settings</button>
+        <button 
+          onClick={handleSave} 
+          disabled={isSaving}
+          className="save-button"
+        >
+          {isSaving ? "Saving..." : "Save Settings"}
+        </button>
         
-        {saveMessage && (<div className="save-message">{saveMessage}</div>)}
+        {saveMessage && (
+          <div className="save-message">
+            {saveMessage}
+          </div>
+        )}
       </div>
     </div>
   );
