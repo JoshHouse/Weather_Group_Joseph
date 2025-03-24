@@ -37,36 +37,64 @@ function WeatherConditionsPage({ city = "London", weatherData: propWeatherData =
   const [loading, setLoading] = useState(propWeatherData === null); // Only set loading to true if we need to fetch data
   const [error, setError] = useState(null); // State to track any errors
 
+  // My API key *DO NOT USE*
+  const apiKey = "a7ecb5d8aaa97f57473de04085971f14";
+
   // useEffect hook to run the weather data fetching function when the component mounts or when the city changes
   useEffect(() => {
-    // If weather data was provided as a prop, no need to fetch
-    if (propWeatherData) {
-      setWeatherData(propWeatherData);
-      setLoading(false);
-      return;
-    }
+    // fetchWeatherData based on city set on passed in city from app.js
+    const fetchWeatherData = () => {
+      // If weather data was provided as a prop, no need to fetch
+      if (propWeatherData) {
+        setWeatherData(propWeatherData);
+        setLoading(false);
+        return;
+      }
 
-    // Function to fetch weather data from our backend API
-    const fetchWeatherData = async () => {
       setLoading(true);
       setError(null);
       
-      try {
-        // Make request to our Flask backend
-        const response = await axios.get(`http://127.0.0.1:5000/api/weather?city=${city}`);
-        setWeatherData(response.data);
-      } catch (err) {
-        console.error("Error fetching weather:", err);
-        setError("Failed to load weather data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+      // Constructs url
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+
+      // Makes a call to the api
+      fetch(url)
+        .then(response => {
+          // Throws an error if response is !okay
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Sets weather data to response from API
+          setWeatherData({
+            name: data.name,
+            weather: data.weather[0].main,
+            description: data.weather[0].description,
+            temperature: data.main.temp,
+            feels_like: data.main.feels_like,
+            temp_max: data.main.temp_max,
+            temp_min: data.main.temp_min,
+            wind_speed: data.wind.speed,
+            wind_direction: data.wind.deg,
+            wind_gust: data.wind.gust || 0,
+            sunrise: data.sys.sunrise,
+            sunset: data.sys.sunset,
+          });
+        })
+        // Catch any errors encountered
+        .catch(error => {
+          console.error("Error fetching weather:", error);
+          setError("Failed to load weather data. Please try again later.");
+        })
+        .finally(() => setLoading(false)); // <-- Fixed finally block
+
     };
 
-    fetchWeatherData(); // Call the function to fetch weather data
-
+    fetchWeatherData(); 
   }, [city, propWeatherData]); // Re-run this effect whenever the city or propWeatherData changes
-
+  
   // If loading, show a loading message
   if (loading) {
     return <div className="loading-message">Loading weather data...</div>;
