@@ -93,10 +93,6 @@ const Header = ({ onSearch }) => {
                 )}
             </div>
 
-            <div className="logo-container"> {/* Logo Wrapper Div */}
-                <img src={WGJLogo} alt="Logo" className="logo" />
-            </div>
-
         </header>
     );
 };

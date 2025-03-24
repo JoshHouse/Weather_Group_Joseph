@@ -35,6 +35,8 @@ function App() {
         return <WeatherComparisonMenu />;
       case "settings": // Called when settings button is pressed on the sidebar
         return <SettingsPage setTheme={setTheme} theme={theme} />; // Settings page passes theme to app.js
+      case "forecast":
+        return <WeeklyForecast />
       case "home":  // Called when home or exit are pressed
         return <HomePage />
       default: // Called by default
