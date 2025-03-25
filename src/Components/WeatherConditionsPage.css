@@ -1,11 +1,33 @@
 /* Weather Conditins Styling */
-.weather-container {
+.weather-conditions-container {
   display: flex;
   flex-direction: column; 
   justify-content: center; 
   width: 100%;
   height: 100%;
-  padding: 2%;
+  background-Size: cover;
+  background-Position: center;
+  background-Repeat: no-repeat;
+}
+
+.sunnyGif {
+  background-image: url('../Assets/images/Sunny.gif');
+}
+
+.cloudyGif {
+  background-image: url('../Assets/images/Cloudy.gif');
+}
+
+.rainGif {
+  background-image: url('../Assets/images/Rain.gif');
+}
+
+.snowGif {
+  background-image: url('../Assets/images/Snow.gif');
+}
+
+.thunderstormsGif {
+  background-image: url('../Assets/images/Thunderstroms.gif');
 }
 
 /* Title and Forecast styling */
@@ -18,29 +40,21 @@
 
 /* Location name title styling */
 .location {
-  font-size: 4vh;
+  font-size: 6vh;
   font-weight: bold;
   margin-bottom: 2%;
-  color: var(--text-dark-color);
-}
-
-/* Forcast gap styling */
-.forecast-gap {
-  width: 100%;
-  height: 13vh; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3vh;
-  color: var(--primary1-color);
-  border: 1px dashed var(--primary1-color); 
+  padding: 1%;
+  border-radius: 5px;
+  background-color: rgba(var(--primary1-rgb),.8);
+  color: var(--text-light-color);
+  font-Size: 32px;
 }
 
 /* Weather Info styling */
 .columns-container {
   display: flex;
   width: 100%;
-  justify-content: space-between; 
+  justify-content: center; 
 }
 
 /* Left and Right Info column styling */
@@ -49,14 +63,33 @@
   display: flex;
   flex-direction: column; 
   align-items: center; 
-  justify-content: flex-start; 
   width: 30%; 
+  background-Color: rgba(var(--page-rgb), .7); 
+  padding: 15px; 
+  border-Radius: 8px;
+  border-width: 2px; 
+  border-style: solid;
+  border-color: var(--primary1-color);
+  box-sizing: border-box;
+  object-fit: cover;
+  box-shadow: 0 5px 15px var(--shadow-color);
 }
 
 /* Middle info column styling */
 .middle-column {
-  width: 35%; 
+  width: 30%; 
+  margin-right: 2%;
+  margin-left: 2%;
   text-align: center;
+  background-Color: rgba(var(--page-rgb), .7); 
+  padding: 15px; 
+  border-Radius: 8px;
+  border-width: 2px; 
+  border-style: solid;
+  border-color: var(--primary1-color);
+  box-sizing: border-box;
+  object-fit: cover;
+  box-shadow: 0 5px 15px var(--shadow-color);
 }
 
 /* p element info column styling */
