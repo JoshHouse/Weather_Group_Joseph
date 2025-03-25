@@ -1,13 +1,6 @@
 // Import necessary libraries
 import React, { useState, useEffect } from "react"; // React hooks: useState for managing state, useEffect for handling side effects
-import axios from "axios"; // For making HTTP requests
 import "./WeatherConditionsPage.css"; // Import Component CSS styling
-// Import weather background GIFs
-import cloudyGif from "../Assets/images/Cloudy.gif";
-import rainGif from "../Assets/images/Rain.gif";
-import snowGif from "../Assets/images/Snow.gif";
-import sunnyGif from "../Assets/images/Sunny.gif";
-import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
 
 // Function to get the appropriate weather background GIF based on the weather condition
 function getWeatherBackground(weatherCondition) {
@@ -16,18 +9,18 @@ function getWeatherBackground(weatherCondition) {
   
   // Map weather conditions to their corresponding background GIFs
   if (condition.includes('cloud') || condition.includes('overcast') || condition.includes('fog') || condition.includes('mist')) {
-    return cloudyGif;
+    return 'cloudyGif';
   } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
-    return rainGif;
+    return 'rainGif';
   } else if (condition.includes('snow') || condition.includes('sleet') || condition.includes('hail') || condition.includes('ice')) {
-    return snowGif;
+    return 'snowGif';
   } else if (condition.includes('thunder') || condition.includes('storm') || condition.includes('lightning')) {
-    return thunderstormsGif;
+    return 'thunderstormsGif';
   } else if (condition.includes('clear') || condition.includes('sun') || condition.includes('fair')) {
-    return sunnyGif;
+    return 'sunnyGif';
   } else {
     // Default to sunny if condition doesn't match any known patterns
-    return sunnyGif;
+    return 'sunnyGif';
   }
 }
 
@@ -112,34 +105,17 @@ function WeatherConditionsPage({ city = "London", weatherData: propWeatherData =
 
   return (
     
-    <div 
-      className="weather-container"
-      style={{ 
-        backgroundImage: `url(${getWeatherBackground(weatherData.weather)})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        color: '#ffffff', // Bright text color for better visibility
-        textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)', // Text shadow for better readability
-        padding: '30px',
-        borderRadius: '10px',
-      }}
-    > {/* Container to hold weather Conditions page with dynamic background */}
+    <div className={`weather-conditions-container ${getWeatherBackground(weatherData.weather)}`}> {/* Container to hold weather Conditions page with dynamic background */}
       
-      <div className="top-section" style={{ color: '#ffffff' }}> {/* Container to hold Location name above columns */}
+      <div className="top-section" > {/* Container to hold Location name above columns */}
         
-        <h2 className="location" style={{ color: '#ffffff', fontSize: '32px' }}>{weatherData.name}</h2> {/* Display the city name */}
+        <h2 className="location" >{weatherData.name}</h2> {/* Display the city name */}
       
       </div> {/* Top-Section end */}
 
       <div className="columns-container"> {/* Container to hold the bottom 3 columns */}
         
-        <div className="left-column" style={{ 
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-          padding: '15px', 
-          borderRadius: '8px',
-          color: '#ffffff'
-        }}> {/* Left Column Container - Displays sunrise, sunset, UV index, and air quality */}
+        <div className="left-column" > {/* Left Column Container - Displays sunrise, sunset, UV index, and air quality */}
           
           {/* Convert sunrise Unix timestamp to human-readable time using .toLocalTimeString() */}
           <p className="sunrise"><strong>Sunrise:</strong> {new Date(weatherData.sunrise * 1000).toLocaleTimeString()}</p> 
@@ -152,12 +128,7 @@ function WeatherConditionsPage({ city = "London", weatherData: propWeatherData =
         
         </div> {/* Left-Column end */}
 
-        <div className="middle-column" style={{ 
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-          padding: '15px', 
-          borderRadius: '8px',
-          color: '#ffffff'
-        }}> {/* Middle Column Container - Displays general weather condition, description, and wind data */}
+        <div className="middle-column"> {/* Middle Column Container - Displays general weather condition, description, and wind data */}
           
           <div className="condition-container"> {/* Conditions container to combine Weather condition and description */}
             
@@ -179,12 +150,7 @@ function WeatherConditionsPage({ city = "London", weatherData: propWeatherData =
         
         </div> {/* Middle-Column end */}
 
-        <div className="right-column" style={{ 
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-          padding: '15px', 
-          borderRadius: '8px',
-          color: '#ffffff'
-        }}>{/* Right Column Container - Displays temperature-related data */}
+        <div className="right-column">{/* Right Column Container - Displays temperature-related data */}
           
           {/* Temperature Stats display in Fahrenheit (due to 'units=imperial' in the URL) */}
           <p className="temperature"><strong>Current Temperature:</strong> {weatherData.temperature}°F</p> {/* Displays Current temperature */}
