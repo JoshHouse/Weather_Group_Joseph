@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Search } from "lucide-react";
 import './Header.css';
-import WGJLogo from "../Assets/images/WGJLogo.png"; // Import Logo
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/weatherUtils"; // Import API constants
 
-const Header = ({ onSearch }) => {
+const Header = ({ setWeatherData, setActivePage }) => {
     const [locationData, setLocationData] = useState({
         name: "Allow location access...",
         weather: "N/A",
@@ -54,16 +52,36 @@ const Header = ({ onSearch }) => {
         }
     }, []);
 
-    // Handle search input
-    const handleSearch = (event) => {
-        if (event.key === "Enter" && city.trim() !== "") {
-            onSearch(city.trim()); // Send search input to homepage
-        }
-    };
+    const fetchWeather = async () => {
+        if (!city) return;
+    
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/get_weather?city=${city}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch weather data");
+            }
+            const data = await response.json();
 
-    const handleSearchClick = () => {
-        if (city.trim() !== "") {
-            onSearch(city.trim()); // Send search input to homepage
+            // Format the data before setting state
+            const formattedWeatherData = {
+                name: data.name,
+                weather: data.weather[0].main,
+                description: data.weather[0].description,
+                temperature: data.main.temp,
+                feels_like: data.main.feels_like,
+                temp_max: data.main.temp_max,
+                temp_min: data.main.temp_min,
+                wind_speed: data.wind.speed,
+                wind_direction: data.wind.deg,
+                wind_gust: data.wind.gust || 0,
+                sunrise: data.sys.sunrise,
+                sunset: data.sys.sunset,
+            };
+
+            setWeatherData(formattedWeatherData);
+            setActivePage("searched");
+        } catch (error) {
+            console.error("Error fetching weather data", error);
         }
     };
 
@@ -75,10 +93,9 @@ const Header = ({ onSearch }) => {
                     placeholder="Search for any city..."
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    onKeyDown={handleSearch}
                     className="search-input"
                 />
-                <Search className="search-icon" onClick={handleSearchClick} />
+                <Search className="search-icon" onClick={fetchWeather} />
             </div>
 
             <div className="weather-info">

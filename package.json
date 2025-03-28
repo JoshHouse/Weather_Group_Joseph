@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --mode development",
+    "start": "concurrently \"webpack serve --mode development\" \"python3.11 APICalls/SavedSearches.py\"",
     "build": "webpack --mode production"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "@babel/preset-env": "^7.26.8",
     "@babel/preset-react": "^7.26.3",
     "babel-loader": "^9.2.1",
+    "concurrently": "^9.1.2",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
     "style-loader": "^4.0.0",

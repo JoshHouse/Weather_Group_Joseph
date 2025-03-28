@@ -16,10 +16,10 @@ function App() {
   console.log("App component rendering");
   // State to hold active pages to switch between them
   const [activePage, setActivePage] = useState("home");
-  // State to hold the city for searching purposes
-  const [city, setCity] = useState("London"); 
   // State to hold the theme (light or dark)
   const [theme, setTheme] = useState("light");
+
+  const [weatherData, setWeatherData] = useState(null);
 
   // Apply theme class to body when component mounts and when theme changes
   useEffect(() => {
@@ -30,7 +30,7 @@ function App() {
   const renderPage = () => {
     switch (activePage) {
       case "searched": // Called by handleSearch function called in Header.js
-        return <WeatherConditionsPage city={city}/>;
+        return <WeatherConditionsPage weatherData={weatherData}/>;
       case "compare": // Called when Compare button is pressed on the sidebar
         return <WeatherComparisonMenu />;
       case "settings": // Called when settings button is pressed on the sidebar
@@ -42,12 +42,6 @@ function App() {
       default: // Called by default
         return <HomePage />;
     }
-  };
-
-  // Updates city to the searched city from the header component
-  const handleSearch = (searchedCity) => {
-    setCity(searchedCity);
-    setActivePage("searched"); // Change to the weather conditions page after search
   };
 
   return (
@@ -63,7 +57,7 @@ function App() {
 
           <div id="header-bar"> {/* header bar wrapper div */}
             {/* pass handleSearch so header can access it */}
-            <Header onSearch={handleSearch} />
+            <Header setWeatherData={setWeatherData} setActivePage={setActivePage} />
           </div>
         
         </div>
