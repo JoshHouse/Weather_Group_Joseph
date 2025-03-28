@@ -1,54 +1,50 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
-import { ThemeContext } from "../app";
+import { AppContext } from "../AppContext";
 import "./SettingsPage.css";
 
 function SettingsPage() {
-  const { theme, setTheme } = useContext(ThemeContext);
-  const [settings, setSettings] = useState({
-    units: "imperial",
-    defaultCity: "London",
-    theme: theme,
-  });
+  const { theme, setTheme, units, setUnits, defaultCity, setDefaultCity } = useContext(AppContext);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
-  // Fetch current settings from backend
-  useEffect(() => {
-    axios.get("http://127.0.0.1:5000/api/settings")
-      .then(response => {setSettings(response.data);})
-      .catch(error => {console.error("Error fetching settings:", error);});
-  }, []);
-
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prevSettings => ({
-      ...prevSettings,
-      [name]: value
-    }));
     if (name === "theme") setTheme(value);
+    else if (name === "units") setUnits(value);
+    else if (name === "defaultCity") setDefaultCity(value);
   };
 
-  // Save settings to backend
   const handleSave = () => {
-    const handleSave = () => {
-      axios.post("http://127.0.0.1:5000/api/settings", settings)
-        .then(() => alert("Settings saved!"))
-        .catch(() => alert("Failed to save settings."));
-    };
+    setIsSaving(true);
+    setSaveMessage("");
+
+    axios.post("http://127.0.0.1:5000/api/settings", {
+      theme,
+      units,
+      defaultCity,
+    })
+      .then(() => {
+        setSaveMessage("Settings saved successfully!");
+        // Apply theme when saved
+        document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
+      })
+      .catch(() => setSaveMessage("Failed to save settings."))
+      .finally(() => {
+        setIsSaving(false);
+        setTimeout(() => setSaveMessage(""), 3000);
+      });
   };
 
   return (
     <div className="settings-container">
       <h2>Settings</h2>
-      
+
       <div className="settings-section">
         <h3>Display Settings</h3>
-        
         <div className="setting-item">
           <label htmlFor="theme">Theme:</label>
-          <select id="theme" name="theme" value={settings.theme} onChange={handleChange}>
+          <select id="theme" name="theme" value={theme} onChange={handleChange}>
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
@@ -57,36 +53,24 @@ function SettingsPage() {
 
       <div className="settings-section">
         <h3>Weather Settings</h3>
-        
         <div className="setting-item">
           <label htmlFor="units">Temperature Units:</label>
-          <select 
-            id="units" 
-            name="units" 
-            value={settings.units} 
-            onChange={handleChange}>
+          <select id="units" name="units" value={units} onChange={handleChange}>
             <option value="imperial">Fahrenheit (°F)</option>
             <option value="metric">Celsius (°C)</option>
           </select>
         </div>
-        
         <div className="setting-item">
           <label htmlFor="defaultCity">Default City:</label>
-          <input 
-            type="text" 
-            id="defaultCity" 
-            name="defaultCity" 
-            value={settings.defaultCity} 
-            onChange={handleChange} 
-            placeholder="Enter city name"
-          />
+          <input id="defaultCity" name="defaultCity" value={defaultCity} onChange={handleChange} />
         </div>
       </div>
 
       <div className="settings-actions">
-        <button onClick={handleSave} className="save-button">Save Settings</button>
-        
-        {saveMessage && (<div className="save-message">{saveMessage}</div>)}
+        <button onClick={handleSave} disabled={isSaving} className="save-button">
+          {isSaving ? "Saving..." : "Save Settings"}
+        </button>
+        {saveMessage && <div className="save-message">{saveMessage}</div>}
       </div>
     </div>
   );

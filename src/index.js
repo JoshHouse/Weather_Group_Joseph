@@ -1,13 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app";
+import "./styles.css";
+import { AppProvider } from "./AppContext";
 
-// Get the root element
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const rootElement = document.getElementById("root");
 
-// Render the App inside root
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <AppProvider> {/* Wrap the App with AppProvider */}
+        <App />
+      </AppProvider>
+    </React.StrictMode>
+  );
+} else {
+  console.error("Root element not found");
+}
