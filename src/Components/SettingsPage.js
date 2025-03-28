@@ -4,14 +4,13 @@ import { AppContext } from "../AppContext";
 import "./SettingsPage.css";
 
 function SettingsPage() {
-  const { theme, setTheme, units, setUnits, defaultCity, setDefaultCity } = useContext(AppContext);
+  const { units, setUnits, defaultCity, setDefaultCity } = useContext(AppContext);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "theme") setTheme(value);
-    else if (name === "units") setUnits(value);
+    if (name === "units") setUnits(value);
     else if (name === "defaultCity") setDefaultCity(value);
   };
 
@@ -20,15 +19,10 @@ function SettingsPage() {
     setSaveMessage("");
 
     axios.post("http://127.0.0.1:5000/api/settings", {
-      theme,
       units,
       defaultCity,
     })
-      .then(() => {
-        setSaveMessage("Settings saved successfully!");
-        // Apply theme when saved
-        document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
-      })
+      .then(() => setSaveMessage("Settings saved successfully!"))
       .catch(() => setSaveMessage("Failed to save settings."))
       .finally(() => {
         setIsSaving(false);
@@ -39,17 +33,6 @@ function SettingsPage() {
   return (
     <div className="settings-container">
       <h2>Settings</h2>
-
-      <div className="settings-section">
-        <h3>Display Settings</h3>
-        <div className="setting-item">
-          <label htmlFor="theme">Theme:</label>
-          <select id="theme" name="theme" value={theme} onChange={handleChange}>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </div>
-      </div>
 
       <div className="settings-section">
         <h3>Weather Settings</h3>
