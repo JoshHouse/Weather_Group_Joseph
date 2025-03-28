@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Search } from "lucide-react";
 import './Header.css';
+
 import WGJLogo from "../assets/images/WGJLogo.png"; // Import Logo
+
+import { API_BASE_URL, API_ENDPOINTS } from "../utils/weatherUtils"; // Import API constants
+import axios from "axios"; // Make sure axios is imported
+
 
 const Header = ({ onSearch }) => {
     const [locationData, setLocationData] = useState({
@@ -33,12 +38,29 @@ const Header = ({ onSearch }) => {
         }
     };
 
+    // Check for saved location or ask user to use current location
+    const checkLocation = () => {
+        const savedLocation = localStorage.getItem("defaultLocation");
+        if (savedLocation) {
+            const location = JSON.parse(savedLocation);
+            fetchUserLocationWeather(location.lat, location.lon);
+        } else {
+            // Prompt the user if no location is saved
+            const useCurrentLocation = window.confirm("Would you like to use your current location?");
+            if (useCurrentLocation) {
+                getUserLocation();
+            }
+        }
+    };
+
     // Get user's geolocation on page load
-    useEffect(() => {
+    const getUserLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
+                    // Save the user's location
+                    localStorage.setItem("defaultLocation", JSON.stringify({ lat: latitude, lon: longitude }));
                     fetchUserLocationWeather(latitude, longitude);
                 },
                 (error) => {
@@ -51,7 +73,8 @@ const Header = ({ onSearch }) => {
             setLocationError("Geolocation not supported.");
             setIsLoading(false);
         }
-    }, []);
+    };
+
 
     // Handle search input
     const handleSearch = (event) => {
@@ -60,11 +83,27 @@ const Header = ({ onSearch }) => {
         }
     };
 
+    // Fetch weather data based on city name
+    const fetchWeather = async () => {
+        if (!city) return;
+
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/get_weather?city=${city}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch weather data");
+            }
+            const data = await response.json();
+
+
     const handleSearchClick = () => {
         if (city.trim() !== "") {
             onSearch(city.trim()); // Send search input to homepage
         }
     };
+
+    useEffect(() => {
+        checkLocation();
+    }, []);
 
     return (
         <header className="header-container">
@@ -92,9 +131,12 @@ const Header = ({ onSearch }) => {
                 )}
             </div>
 
+
             <div className="logo-container"> {/* Logo Wrapper Div */}
                 <img src={WGJLogo} alt="Logo" className="logo" />
             </div>
+
+
 
         </header>
     );
