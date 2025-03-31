@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import './Header.css';
-import { API_BASE_URL, API_ENDPOINTS } from "../utils/weatherUtils"; // Import API constants
+import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils"; // Import Backend constants
 
 const Header = ({ setWeatherData, setActivePage }) => {
     const [locationData, setLocationData] = useState({
@@ -16,14 +16,16 @@ const Header = ({ setWeatherData, setActivePage }) => {
     // Fetch weather data based on user location
     const fetchUserLocationWeather = async (latitude, longitude) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.WEATHER}?lat=${latitude}&lon=${longitude}`);
-            if (response.data) {
-                setLocationData({
-                    name: response.data.name || "Unknown Location",
-                    weather: response.data.weather || "N/A",
-                    temperature: response.data.temperature || "N/A",
-                });
+            const response = await fetch(`${ BACKEND_BASE_URLS.USER_CONDITIONS }${ BACKEND_ENDPOINTS.USER_CONDITIONS}?lat=${latitude}&lon=${longitude}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            const data = await response.json();
+            setLocationData({
+                name: data.name || "Unknown Location",
+                weather: data.weather[0].description || "N/A",
+                temperature: data.main.temp || "N/A",
+            });
         } catch (error) {
             console.error("Error fetching location-based weather:", error);
             setLocationError("Failed to load location-based weather.");
@@ -31,6 +33,7 @@ const Header = ({ setWeatherData, setActivePage }) => {
             setIsLoading(false);
         }
     };
+    
 
     // Get user's geolocation on page load
     useEffect(() => {
@@ -56,7 +59,7 @@ const Header = ({ setWeatherData, setActivePage }) => {
         if (!city) return;
     
         try {
-            const response = await fetch(`http://127.0.0.1:5000/get_weather?city=${city}`);
+            const response = await fetch(`${ BACKEND_BASE_URLS.SAVED_SEARCHES }${ BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${city}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch weather data");
             }

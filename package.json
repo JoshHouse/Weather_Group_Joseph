@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"webpack serve --mode development\" \"python3.11 APICalls/SavedSearches.py\"",
+    "start": "concurrently \"webpack serve --mode development\" \"python3.11 Backend/Main.py\"",
     "build": "webpack --mode production"
   },
   "repository": {

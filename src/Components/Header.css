@@ -46,7 +46,7 @@
 .search-icon {
     cursor: pointer;
     padding-right: 1%;
-    color: #34495e;
+    color: var(--text-dark-color);
 }
 
 /* Style for the search tooltip */

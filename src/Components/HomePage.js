@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./HomePage.css";
 import GoogleMapComponent from "./GoogleMapComponent";
-import { API_BASE_URL, API_ENDPOINTS, formatLocationQuery } from "../utils/weatherUtils.js";
+import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS, formatLocationQuery } from "../utils/frontEndUtils.js";
 
 function HomePage({ searchedCity }) {
   const [weatherData, setWeatherData] = useState(null);
@@ -17,7 +17,7 @@ function HomePage({ searchedCity }) {
         setError(null);
 
         try {
-          const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.WEATHER}?city=${searchedCity}`);
+          const response = await axios.get(`${BACKEND_BASE_URLS.USER_CONDITIONS}${BACKEND_ENDPOINTS.USER_CONDITIONS}?city=${searchedCity}`);
           setWeatherData(response.data);
           
           // If the API response includes coordinates, update the state
@@ -54,7 +54,7 @@ function HomePage({ searchedCity }) {
 
       try {
         const locationQuery = formatLocationQuery(`${newCoordinates.lat},${newCoordinates.lng}`);
-        const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.WEATHER}?city=${locationQuery}`);
+        const response = await axios.get(`${BACKEND_BASE_URL}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationQuery}`);
         setWeatherData(response.data);
       } catch (err) {
         console.error("Error fetching weather for coordinates:", err);
