@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import time
-from BackendUtils import API_URLS, API_KEYS
+from Utils.BackendUtils import API_URLS, API_KEYS
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow cross-origin requests

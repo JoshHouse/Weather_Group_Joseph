@@ -96,9 +96,15 @@ const Header = ({ setWeatherData, setActivePage }) => {
                     placeholder="Search for any city..."
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        fetchWeather(); // Call the function properly
+                      }
+                    }}
                     className="search-input"
                 />
-                <Search className="search-icon" onClick={fetchWeather} />
+                <Search className="search-icon" onClick={
+                    fetchWeather} />
             </div>
 
             <div className="weather-info">
