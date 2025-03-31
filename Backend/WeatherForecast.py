@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request  # Flask for web server and jsonify for returning JSON responses
 from flask_cors import CORS  # CORS for handling Cross-Origin Resource Sharing
 import requests  # Requests for making HTTP requests to external APIs
-from Utils.BackendUtils import API_URLS, API_KEYS
+from BackendUtils import API_URLS, API_KEYS
 
 # Initialize Flask application
 app = Flask(__name__)
