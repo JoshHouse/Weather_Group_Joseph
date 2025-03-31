@@ -94,3 +94,35 @@
 .weather-location, .weather-description, .weather-temperature {
     color: var(--text-dark-color);
 }
+
+/* Dropdown suggestion list */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    color: #34495e;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Individual dropdown item */
+.suggestions-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Hover effect */
+.suggestions-dropdown li:hover {
+    background-color: #f0f0f0;
+}

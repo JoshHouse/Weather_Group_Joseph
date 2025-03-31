@@ -14,6 +14,9 @@ const Header = ({ onSearch }) => {
     const [locationError, setLocationError] = useState(null);
     const [city, setCity] = useState("");
 
+    const [suggestedCities, setSuggestedCities] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
     // Fetch weather data based on user location
     const fetchUserLocationWeather = async (latitude, longitude) => {
         try {
@@ -24,6 +27,11 @@ const Header = ({ onSearch }) => {
                     weather: response.data.weather || "N/A",
                     temperature: response.data.temperature || "N/A",
                 });
+
+                const nearbyResponse = await axios.get(`${API_BASE_URL}/nearby-cities?lat=${latitude}&lon=${longitude}`);
+                if (nearbyResponse.data && Array.isArray(nearbyResponse.data.cities)) {
+                    setSuggestedCities(nearbyResponse.data.cities);
+                }
             }
         } catch (error) {
             console.error("Error fetching location-based weather:", error);
@@ -75,9 +83,28 @@ const Header = ({ onSearch }) => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     onKeyDown={handleSearch}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     className="search-input"
                 />
                 <Search className="search-icon" onClick={handleSearchClick} />
+
+                {showSuggestions && suggestedCities.length > 0 && (
+                    <ul className="suggestions-dropdown">
+                        {suggestedCities.map((suggestion, index) => (
+                            <li
+                                key={index}
+                                onClick={() => {
+                                    setCity(suggestion);
+                                    onSearch(suggestion);
+                                    setShowSuggestions(false);
+                                }}
+                            >
+                                {suggestion}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <div className="weather-info">
