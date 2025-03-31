@@ -1,5 +1,5 @@
 // Import necessary libraries
-import React, { useState, useEffect } from "react"; // React hooks: useState for managing state, useEffect for handling side effects
+import React from "react"; // React hooks: useState for managing state, useEffect for handling side effects
 import "./WeatherConditionsPage.css"; // Import Component CSS styling
 
 // Function to get the appropriate weather background GIF based on the weather condition

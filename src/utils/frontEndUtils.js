@@ -63,18 +63,20 @@ export const formatDate = (dateString) => {
 };
 
 /**
- * API endpoints for the backend
+ * Backend Endpoints
  */
-export const API_ENDPOINTS = {
-  WEATHER: "/api/weather",
-  FORECAST: "/api/forecast",
-  UV_INDEX: "/api/uv-index",
-  AIR_QUALITY: "/api/air-quality",
-  COMPARE: "/api/compare",
-  SETTINGS: "/api/settings"
-};
+export const BACKEND_ENDPOINTS = {
+  SAVED_SEARCHES: "/saved_searches",
+  USER_CONDITIONS: "/user_location_weather",
+  WEATHER_FORECAST: "/forecast"
+}
 
 /**
  * Base URL for the backend API
  */
-export const API_BASE_URL = "http://127.0.0.1:5000";
+export const BACKEND_BASE_URLS = {
+  MAIN: "http://127.0.0.1:5000",
+  SAVED_SEARCHES: "http://127.0.0.1:5001",
+  USER_CONDITIONS: "http://127.0.0.1:5002",
+  WEATHER_FORECAST: "http://127.0.0.1:5003",
+}
