@@ -1,34 +1,25 @@
 import React, { useState } from 'react';
 import './WeatherComparisonMenu.css';
-// Import weather background GIFs
-import cloudyGif from "../Assets/images/Cloudy.gif";
-import rainGif from "../Assets/images/Rain.gif";
-import snowGif from "../Assets/images/Snow.gif";
-import sunnyGif from "../Assets/images/Sunny.gif";
-import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
 import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils";
 
 // Function to get the appropriate weather background GIF based on the weather condition
 function getWeatherBackground(weatherCondition) {
-  if (!weatherCondition) return sunnyGif;
+  if (!weatherCondition) return 'sunnyGif';
   
-  // Convert to lowercase for case-insensitive matching
   const condition = weatherCondition.toLowerCase();
   
-  // Map weather conditions to their corresponding background GIFs
   if (condition.includes('cloud') || condition.includes('overcast') || condition.includes('fog') || condition.includes('mist')) {
-    return cloudyGif;
+    return 'cloudyGif';
   } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
-    return rainGif;
+    return 'rainGif';
   } else if (condition.includes('snow') || condition.includes('sleet') || condition.includes('hail') || condition.includes('ice')) {
-    return snowGif;
+    return 'snowGif';
   } else if (condition.includes('thunder') || condition.includes('storm') || condition.includes('lightning')) {
-    return thunderstormsGif;
+    return 'thunderstormsGif';
   } else if (condition.includes('clear') || condition.includes('sun') || condition.includes('fair')) {
-    return sunnyGif;
+    return 'sunnyGif';
   } else {
-    // Default to sunny if condition doesn't match any known patterns
-    return sunnyGif;
+    return 'sunnyGif';
   }
 }
 
@@ -95,100 +86,127 @@ const WeatherComparisonMenu = () => {
 
 
   return (
-    <div className="comparison-menu">
-      <h2>Compare Weather Between Cities</h2>
-      
-      <div className="location-one-container">
-            <div className="location-input">
-              <input
-                type="text"
-                placeholder={`Enter Location 1`}
-                onChange={(e) => {
-                  setLocationOne(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setLocationOneData(fetchWeatherData(locationOne, 1));
-                  }}}
-              />
-            </div>
-
-            {locationOneData && (
-              <div className="weather-details">
-                <h3>{locationOneData.city}</h3>
-                <div className="details-grid">
-                  <p><strong>Temperature:</strong> {locationOneData.temp}</p>
-                  <p><strong>Feels Like:</strong> {locationOneData.feelsLike}</p>
-                  <p><strong>Condition:</strong> {locationOneData.condition}</p>
-                  <p><strong>Wind Speed:</strong> {locationOneData.windSpeed}</p>
-                  <p><strong>Wind Direction:</strong> {locationOneData.windDirection}</p>
-                  <p><strong>Sunset:</strong> {locationOneData.sunset}</p>
-                  <p><strong>UV Index:</strong> {locationOneData.uvIndex}</p>
-                  <p><strong>Air Quality:</strong> {locationOneData.airQuality}</p>
-                </div>
-              </div>
-            )}
+    <div id="comparison-menu-container">
+      <div id="comparison-header-container">
+        <h2 id="comparison-header">Compare Weather Between Cities</h2>
       </div>
 
-      <div className="location-two-container">
-            <div className="location-input">
-              <input
-                type="text"
-                placeholder={`Enter Location 1`}
-                onChange={(e) => {
-                  setLocationTwo(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setLocationTwoData(fetchWeatherData(locationTwo, 2));
-                  }}}
-              />
-            </div>
-            
-            {locationTwoData && (
-              <div className="weather-details">
-                <h3>{locationTwoData.city}</h3>
-                <div className="details-grid">
-                  <p><strong>Temperature:</strong> {locationTwoData.temp}</p>
-                  <p><strong>Feels Like:</strong> {locationTwoData.feelsLike}</p>
-                  <p><strong>Condition:</strong> {locationTwoData.condition}</p>
-                  <p><strong>Wind Speed:</strong> {locationTwoData.windSpeed}</p>
-                  <p><strong>Wind Direction:</strong> {locationTwoData.windDirection}</p>
-                  <p><strong>Sunset:</strong> {locationTwoData.sunset}</p>
-                  <p><strong>UV Index:</strong> {locationTwoData.uvIndex}</p>
-                  <p><strong>Air Quality:</strong> {locationTwoData.airQuality}</p>
-                </div>
-              </div>
-            )}
-      </div>
-      
-      <div className="comparison-actions">
-        <button 
-          onClick={handleCompareStatistics} 
-          className="compare-button"
-        >
-          Compare Cities
-        </button>
-      </div>
-      
-      {comparisonResult && (
-        <div className="comparison-result" style={{ 
-          backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${getWeatherBackground(weatherData[0]?.condition)}), url(${getWeatherBackground(weatherData[1]?.condition)})`,
-          backgroundSize: '50% 100%, 50% 100%',
-          backgroundPosition: 'left top, right top',
-          backgroundRepeat: 'no-repeat',
-        }}>
-          <h3>Comparison Result</h3>
-          <div className="result-grid">
-            <p><strong>Temperature:</strong> {comparisonResult.tempDifference}</p>
-            <p><strong>Feels Like:</strong> {comparisonResult.feelsLikeDifference}</p>
-            <p><strong>Condition:</strong> {comparisonResult.conditionComparison}</p>
-            <p><strong>Wind Speed:</strong> {comparisonResult.windSpeedComparison}</p>
-            <p><strong>UV Index:</strong> {comparisonResult.uvIndexComparison}</p>
-            <p><strong>Air Quality:</strong> {comparisonResult.airQualityComparison}</p>
+      <div id="comparison-column-container">
+        <div id="location-one-input-column">
+          <div className="location-comparison-input">
+            <label htmlFor="location-one">Location One:</label>
+            <input
+              type="text"
+              placeholder={`Enter Location 1`}
+              onChange={(e) => {
+                setLocationOne(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setLocationOneData(fetchWeatherData(locationOne, 1));
+                }}}
+            />
           </div>
+                
+          {locationOneData && (
+            <div className={`weather-comparison-background ${getWeatherBackground(locationOneData.condition)}`}>
+              <div className="text-comparison-background">
+                <h3 className="h3-weather-comparison-header">{locationOneData.city}</h3>
+                <div className="details-grid">
+                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationOneData.temp}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationOneData.feelsLike}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Condition:</strong> {locationOneData.condition}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationOneData.windSpeed}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationOneData.windDirection}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Sunset Time:</strong> {locationOneData.sunset}</p>
+                  <p className="p-weather-comparison-statistics"><strong>UV Index:</strong> {locationOneData.uvIndex}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Air Quality:</strong> {locationOneData.airQuality}</p>
+                </div>
+              </div>
+              
+            </div>
+          )}
+
+
+
+          
         </div>
-      )}
+
+
+        <div id="location-two-input-column">
+          <div className="location-comparison-input">
+            <label htmlFor="location-two">Location Two:</label>
+            <input
+              type="text"
+              placeholder={`Enter Location 1`}
+              onChange={(e) => {
+                setLocationTwo(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setLocationTwoData(fetchWeatherData(locationTwo, 2));
+                }}}
+            />
+          </div>
+
+          {locationTwoData && (
+            <div className={`weather-comparison-background ${getWeatherBackground(locationTwoData.condition)}`}>
+              <div className="text-comparison-background">
+                <h3 className="h3-weather-comparison-header">{locationTwoData.city}</h3>
+                <div className="details-grid">
+                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationTwoData.temp}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationTwoData.feelsLike}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Condition:</strong> {locationTwoData.condition}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationTwoData.windSpeed}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationTwoData.windDirection}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Sunset Time:</strong> {locationTwoData.sunset}</p>
+                  <p className="p-weather-comparison-statistics"><strong>UV Index:</strong> {locationTwoData.uvIndex}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Air Quality:</strong> {locationTwoData.airQuality}</p>
+                </div>
+              </div>
+              
+            </div>
+          )}
+
+
+        </div>
+
+
+        <div id="compare-statistics-column">
+          {locationOneData && locationTwoData && !comparisonResult && (
+            <button 
+              onClick={handleCompareStatistics} 
+              className="compare-button">
+              Compare Cities
+            </button>
+          )}
+          
+          {comparisonResult && (
+            <div className="comparison-result">
+            <h3>Comparison Result</h3>
+            <div className="result-grid">
+              <p><strong>Temperature:</strong> {comparisonResult.tempDifference}</p>
+              <p><strong>Feels Like:</strong> {comparisonResult.feelsLikeDifference}</p>
+              <p><strong>Condition:</strong> {comparisonResult.conditionComparison}</p>
+              <p><strong>Wind Speed:</strong> {comparisonResult.windSpeedComparison}</p>
+              <p><strong>UV Index:</strong> {comparisonResult.uvIndexComparison}</p>
+              <p><strong>Air Quality:</strong> {comparisonResult.airQualityComparison}</p>
+            </div>
+            </div>
+          )}
+
+          {comparisonResult && (
+            <button 
+              onClick={() => setComparisonResult(null)} 
+              className="clear-compare-button">
+              Clear Comparison
+            </button>
+          )}
+
+        </div>
+      
+      </div>
+      
     </div>
   );
 };
