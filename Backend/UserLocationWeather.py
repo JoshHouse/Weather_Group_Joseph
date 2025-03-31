@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS
-from Utils.BackendUtils import API_URLS, API_KEYS
+from BackendUtils import API_URLS, API_KEYS
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for frontend access
