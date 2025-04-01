@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import './Header.css';
 import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils"; // Import Backend constants
 
-const Header = ({ setWeatherData, setActivePage }) => {
+const Header = ({ setWeatherData, setActivePage, units }) => {
     const [locationData, setLocationData] = useState({
         name: "Allow location access...",
         weather: "N/A",
@@ -13,10 +13,18 @@ const Header = ({ setWeatherData, setActivePage }) => {
     const [locationError, setLocationError] = useState(null);
     const [city, setCity] = useState("");
 
+    if (units === 'metric') {
+        var tempSymbol = '°C';
+        var speedSymbol = 'km/h';
+    } else {
+        var tempSymbol = '°F';
+        var speedSymbol = 'mph';
+    }
+
     // Fetch weather data based on user location
     const fetchUserLocationWeather = async (latitude, longitude) => {
         try {
-            const response = await fetch(`${ BACKEND_BASE_URLS.USER_CONDITIONS }${ BACKEND_ENDPOINTS.USER_CONDITIONS}?lat=${latitude}&lon=${longitude}`);
+            const response = await fetch(`${ BACKEND_BASE_URLS.USER_CONDITIONS }${ BACKEND_ENDPOINTS.USER_CONDITIONS}?lat=${latitude}&lon=${longitude}&units=${units}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -59,7 +67,7 @@ const Header = ({ setWeatherData, setActivePage }) => {
         if (!city) return;
     
         try {
-            const response = await fetch(`${ BACKEND_BASE_URLS.SAVED_SEARCHES }${ BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${city}`);
+            const response = await fetch(`${ BACKEND_BASE_URLS.SAVED_SEARCHES }${ BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${city}&units=${units}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch weather data");
             }
@@ -114,7 +122,7 @@ const Header = ({ setWeatherData, setActivePage }) => {
                     <>
                         <p className="weather-location"><strong>Location: </strong>{locationData.name}</p>
                         <p className="weather-description"><strong>Weather Conditions: </strong>{locationData.weather}</p>
-                        <p className="weather-temperature"><strong>Temperature: </strong>{locationData.temperature}°F</p>
+                        <p className="weather-temperature"><strong>Temperature: </strong>{locationData.temperature}{tempSymbol}</p>
                     </>
                 )}
             </div>

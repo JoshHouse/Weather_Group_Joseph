@@ -10,11 +10,12 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for frontend acces
 def get_weather():
     lat = request.args.get('lat')
     lon = request.args.get('lon')
+    units = request.args.get('units')
 
     if not lat or not lon:
         return jsonify({"error": "Latitude and longitude are required"}), 400
 
-    weather_url = f"{API_URLS['WEATHER']}?lat={lat}&lon={lon}&appid={API_KEYS['JOSHUA']}"
+    weather_url = f"{API_URLS['WEATHER']}?lat={lat}&lon={lon}&appid={API_KEYS['JOSHUA']}&units={units}"
     
     try:
         response = requests.get(weather_url)

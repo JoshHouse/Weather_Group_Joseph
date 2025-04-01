@@ -9,7 +9,7 @@ import HomePage from "./Components/HomePage";
 import SettingsPage from "./Components/SettingsPage";
 import "./App.css";
 
-export const ThemeContext = createContext();
+export const AppContext = createContext();
 
 // App function
 function App() {
@@ -18,6 +18,10 @@ function App() {
   const [activePage, setActivePage] = useState("home");
   // State to hold the theme (light or dark)
   const [theme, setTheme] = useState("light");
+
+  const [units, setUnits] = useState("imperial");
+
+  const [defaultLocation, setDefaultLocation] = useState("London");
 
   const [weatherData, setWeatherData] = useState(null);
 
@@ -30,11 +34,13 @@ function App() {
   const renderPage = () => {
     switch (activePage) {
       case "searched": // Called by handleSearch function called in Header.js
-        return <WeatherConditionsPage weatherData={weatherData}/>;
+        return <WeatherConditionsPage weatherData={weatherData} units={units} />;
       case "compare": // Called when Compare button is pressed on the sidebar
-        return <WeatherComparisonMenu />;
+        return <WeatherComparisonMenu units={units}/>;
       case "settings": // Called when settings button is pressed on the sidebar
-        return <SettingsPage setTheme={setTheme} theme={theme} />; // Settings page passes theme to app.js
+        return <SettingsPage  setTheme={setTheme} theme={theme} 
+                              setUnits={setUnits} units={units} 
+                              setDefaultLocation={setDefaultLocation} defaultLocation={defaultLocation} />; // Settings page passes theme to app.js
       case "forecast":
         return <WeeklyForecast />
       case "home":  // Called when home or exit are pressed
@@ -45,7 +51,7 @@ function App() {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <AppContext.Provider value={{ theme, setTheme }}>
       <div id="app-container"> {/* App wrapper div */}
         
         <div id="top-bar"> {/* header bar and exit button wrapper div */}
@@ -57,7 +63,7 @@ function App() {
 
           <div id="header-bar"> {/* header bar wrapper div */}
             {/* pass handleSearch so header can access it */}
-            <Header setWeatherData={setWeatherData} setActivePage={setActivePage} />
+            <Header setWeatherData={setWeatherData} setActivePage={setActivePage} units={units} />
           </div>
         
         </div>
@@ -75,7 +81,7 @@ function App() {
         </div>
       
       </div>
-    </ThemeContext.Provider>
+    </AppContext.Provider>
   );
 }
 

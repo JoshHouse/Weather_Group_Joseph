@@ -23,17 +23,25 @@ function getWeatherBackground(weatherCondition) {
   }
 }
 
-const WeatherComparisonMenu = () => {
+function WeatherComparisonMenu({ units }) {
   const [locationOne, setLocationOne] = useState(null);
   const [locationTwo, setLocationTwo] = useState(null);
   const [locationOneData, setLocationOneData] = useState(null);
   const [locationTwoData, setLocationTwoData] = useState(null);
   const [comparisonResult, setComparisonResult] = useState(null);
 
+  if (units === 'metric') {
+    var tempSymbol = '°C';
+    var speedSymbol = 'km/h';
+  } else {
+    var tempSymbol = '°F';
+    var speedSymbol = 'mph';
+  }
+
   const fetchWeatherData = async (locationName, locationNum) => {
     try {
       // Call our backend API using fetch
-      const response = await fetch(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationName}`);
+      const response = await fetch(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationName}&units=${units}`);
       
       // Check if the response is OK (status code 200-299)
       if (!response.ok) {
@@ -67,14 +75,14 @@ const WeatherComparisonMenu = () => {
   };
   
 
-  const handleCompareStatistics = () => {
+  function handleCompareStatistics(tempSymbol, speedSymbol) {
     if (locationOneData && locationTwoData) {
       
       const result = {
-        tempDifference: `${locationOneData.temp} vs ${locationTwoData.temp} (${locationOneData.temp - locationTwoData.temp}°F difference)`,
-        feelsLikeDifference: `${locationOneData.feelsLike} vs ${locationTwoData.feelsLike}`,
+        tempDifference: `${locationOneData.temp}${tempSymbol} vs ${locationTwoData.temp}${tempSymbol} (${locationOneData.temp - locationTwoData.temp}${tempSymbol} difference)`,
+        feelsLikeDifference: `${locationOneData.feelsLike}${tempSymbol} vs ${locationTwoData.feelsLike}${tempSymbol}`,
         conditionComparison: `${locationOneData.condition} vs ${locationTwoData.condition}`,
-        windSpeedComparison: `${locationOneData.windSpeed} vs ${locationTwoData.windSpeed}`,
+        windSpeedComparison: `${locationOneData.windSpeed}${speedSymbol} vs ${locationTwoData.windSpeed}${speedSymbol}`,
         uvIndexComparison: `${locationOneData.uvIndex} vs ${locationTwoData.uvIndex}`,
         airQualityComparison: `${locationOneData.airQuality} vs ${locationTwoData.airQuality}`
       };
@@ -113,11 +121,11 @@ const WeatherComparisonMenu = () => {
               <div className="text-comparison-background">
                 <h3 className="h3-weather-comparison-header">{locationOneData.city}</h3>
                 <div className="details-grid">
-                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationOneData.temp}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationOneData.feelsLike}</p>
                   <p className="p-weather-comparison-statistics"><strong>Condition:</strong> {locationOneData.condition}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationOneData.windSpeed}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationOneData.windDirection}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationOneData.temp}{tempSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationOneData.feelsLike}{tempSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationOneData.windSpeed}{speedSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationOneData.windDirection}°</p>
                   <p className="p-weather-comparison-statistics"><strong>Sunset Time:</strong> {locationOneData.sunset}</p>
                   <p className="p-weather-comparison-statistics"><strong>UV Index:</strong> {locationOneData.uvIndex}</p>
                   <p className="p-weather-comparison-statistics"><strong>Air Quality:</strong> {locationOneData.airQuality}</p>
@@ -154,11 +162,11 @@ const WeatherComparisonMenu = () => {
               <div className="text-comparison-background">
                 <h3 className="h3-weather-comparison-header">{locationTwoData.city}</h3>
                 <div className="details-grid">
-                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationTwoData.temp}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationTwoData.feelsLike}</p>
                   <p className="p-weather-comparison-statistics"><strong>Condition:</strong> {locationTwoData.condition}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationTwoData.windSpeed}</p>
-                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationTwoData.windDirection}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Temperature:</strong> {locationTwoData.temp}{tempSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Feels Like:</strong> {locationTwoData.feelsLike}{tempSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Speed:</strong> {locationTwoData.windSpeed}{speedSymbol}</p>
+                  <p className="p-weather-comparison-statistics"><strong>Wind Direction:</strong> {locationTwoData.windDirection}°</p>
                   <p className="p-weather-comparison-statistics"><strong>Sunset Time:</strong> {locationTwoData.sunset}</p>
                   <p className="p-weather-comparison-statistics"><strong>UV Index:</strong> {locationTwoData.uvIndex}</p>
                   <p className="p-weather-comparison-statistics"><strong>Air Quality:</strong> {locationTwoData.airQuality}</p>
@@ -175,7 +183,7 @@ const WeatherComparisonMenu = () => {
         <div id="compare-statistics-column">
           {locationOneData && locationTwoData && !comparisonResult && (
             <button 
-              onClick={handleCompareStatistics} 
+              onClick={() => handleCompareStatistics(tempSymbol, speedSymbol)} 
               className="compare-button">
               Compare Cities
             </button>

@@ -1,34 +1,25 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./WeeklyForecast.css";
-// Import weather background GIFs
-import cloudyGif from "../Assets/images/Cloudy.gif";
-import rainGif from "../Assets/images/Rain.gif";
-import snowGif from "../Assets/images/Snow.gif";
-import sunnyGif from "../Assets/images/Sunny.gif";
-import thunderstormsGif from "../Assets/images/Thunderstroms.gif";
+import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils";
 
 // Function to get the appropriate weather background GIF based on the weather condition
 function getWeatherBackground(weatherCondition) {
-  if (!weatherCondition) return sunnyGif;
+  if (!weatherCondition) return 'sunnyGif';
   
-  // Convert to lowercase for case-insensitive matching
   const condition = weatherCondition.toLowerCase();
   
-  // Map weather conditions to their corresponding background GIFs
   if (condition.includes('cloud') || condition.includes('overcast') || condition.includes('fog') || condition.includes('mist')) {
-    return cloudyGif;
+    return 'cloudyGif';
   } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
-    return rainGif;
+    return 'rainGif';
   } else if (condition.includes('snow') || condition.includes('sleet') || condition.includes('hail') || condition.includes('ice')) {
-    return snowGif;
+    return 'snowGif';
   } else if (condition.includes('thunder') || condition.includes('storm') || condition.includes('lightning')) {
-    return thunderstormsGif;
+    return 'thunderstormsGif';
   } else if (condition.includes('clear') || condition.includes('sun') || condition.includes('fair')) {
-    return sunnyGif;
+    return 'sunnyGif';
   } else {
-    // Default to sunny if condition doesn't match any known patterns
-    return sunnyGif;
+    return 'sunnyGif';
   }
 }
 
@@ -38,24 +29,37 @@ function WeeklyForecast({ city = "London", embedded = true }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchForecast = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await axios.get(`http://127.0.0.1:5000/api/forecast?city=${city}`);
-        setForecast(response.data);
-      } catch (err) {
-        console.error("Error fetching forecast:", err);
-        setError("Failed to load forecast data. Please try again later.");
-      } finally {
-        setLoading(false);
+  // Fetch weather data based on user location
+  const fetchUserLocationForecast = async (latitude, longitude) => {
+    try {
+      const response = await fetch(`${ BACKEND_BASE_URLS.WEATHER_FORECAST }${ BACKEND_ENDPOINTS.WEATHER_FORECAST}?lat=${latitude}&lon=${longitude}`);
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    };
+      const data = await response.json();
+      setForecast(data);
+    } catch (error) {
+      console.error("Error fetching location-based weather:", error);
+    } 
+  };
+    
 
-    fetchForecast();
-  }, [city]);
+  // Get user's geolocation on page load
+  useEffect(() => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            fetchUserLocationForecast(latitude, longitude);
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            setError("Location access denied. Enable location to view weather.");
+          });
+    } else {
+      setError("Geolocation not supported.");
+    }
+  }, []);
 
   // Format date to be more readable
   const formatDate = (dateString) => {

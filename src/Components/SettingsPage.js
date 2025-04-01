@@ -1,64 +1,18 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./SettingsPage.css";
 
-function SettingsPage({ theme, setTheme }) {
-  const [settings, setSettings] = useState({
-    units: "imperial",
-    defaultCity: "London"
-  });
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
-
-  // Fetch current settings from backend
-  useEffect(() => {
-    axios.get("http://127.0.0.1:5000/api/settings")
-      .then(response => {
-        setSettings(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching settings:", error);
-      });
-  }, []);
+function SettingsPage({ setTheme, theme, setUnits, units, setDefaultLocation, defaultLocation }) {
 
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "theme") {
       setTheme(value);
+    } else if (name === "units") {
+      setUnits(value);
     } else {
-      setSettings(prevSettings => ({
-        ...prevSettings,
-        [name]: value
-      }));
+      setDefaultLocation(value);
     }
-  };
-
-  // Save settings to backend
-  const handleSave = () => {
-    setIsSaving(true);
-    setSaveMessage("");
-
-    const settingsToSave = {
-      ...settings,
-      theme: theme
-    };
-
-    axios.post("http://127.0.0.1:5000/api/settings", settingsToSave)
-      .then(response => {
-        setSaveMessage("Settings saved successfully!");
-        // Apply theme change
-        document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
-      })
-      .catch(error => {
-        console.error("Error saving settings:", error);
-        setSaveMessage("Failed to save settings. Please try again.");
-      })
-      .finally(() => {
-        setIsSaving(false);
-        // Clear message after 3 seconds
-        setTimeout(() => setSaveMessage(""), 3000);
-      });
   };
 
   return (
@@ -90,7 +44,7 @@ function SettingsPage({ theme, setTheme }) {
           <select 
             id="units" 
             name="units" 
-            value={settings.units} 
+            value={units} 
             onChange={handleChange}
           >
             <option value="imperial">Fahrenheit (°F)</option>
@@ -104,27 +58,11 @@ function SettingsPage({ theme, setTheme }) {
             type="text" 
             id="defaultCity" 
             name="defaultCity" 
-            value={settings.defaultCity} 
+            value={defaultLocation} 
             onChange={handleChange} 
             placeholder="Enter city name"
           />
         </div>
-      </div>
-
-      <div className="settings-actions">
-        <button 
-          onClick={handleSave} 
-          disabled={isSaving}
-          className="save-button"
-        >
-          {isSaving ? "Saving..." : "Save Settings"}
-        </button>
-        
-        {saveMessage && (
-          <div className="save-message">
-            {saveMessage}
-          </div>
-        )}
       </div>
     </div>
   );

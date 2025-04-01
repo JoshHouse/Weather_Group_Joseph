@@ -14,6 +14,7 @@ CACHE_EXPIRATION = 1800  # 30 minutes
 @app.route("/saved_searches", methods=["GET"])
 def get_weather():
     city = request.args.get("city")
+    units = request.args.get('units')
     if not city:
         return jsonify({"error": "City parameter is required"}), 400
     
@@ -23,15 +24,16 @@ def get_weather():
     if city in weather_cache:
         cached_data = weather_cache[city]
         if current_time - cached_data["timestamp"] < CACHE_EXPIRATION:
-            app.logger.info(f"Returning cached data for {city}")
-            return jsonify(cached_data["data"])  # Return cached response
+            if units == cached_data["units"]:
+                app.logger.info(f"Returning cached data for {city}")
+                return jsonify(cached_data["data"])  # Return cached response
         
     # Fetch new weather data
-    response = requests.get(f"{API_URLS['WEATHER']}?q={city}&appid={API_KEYS['JOSHUA']}&units=imperial")
+    response = requests.get(f"{API_URLS['WEATHER']}?q={city}&appid={API_KEYS['JOSHUA']}&units={units}")
 
     if response.status_code == 200:
         weather_data = response.json()
-        weather_cache[city] = {"timestamp": current_time, "data": weather_data}
+        weather_cache[city] = {"timestamp": current_time, "data": weather_data, "units": units}
         app.logger.info(f"Returning API data for {city}")
         return jsonify(weather_data)
     else:
