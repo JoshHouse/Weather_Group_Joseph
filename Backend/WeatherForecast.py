@@ -10,11 +10,13 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS to allow cross-ori
 # Define the route for fetching weather forecast data
 @app.route('/forecast', methods=['GET'])
 def get_weather():
-    city = request.args.get('q', 'London')  # Default city is London if not provided
-    days = request.args.get('cnt', 7)  # Default to 7 days if not provided
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+    units = request.args.get('units')
+    days = 7
 
     # OpenWeatherMap API URL for daily (up to 16) forecast
-    url = f"{API_URLS['FORECAST']}/daily?q={city}&cnt={days}&appid={API_KEYS['HUNTER']}&units=imperial"
+    url = f"{API_URLS['FORECAST']}/daily?lat={lat}&lon={lon}&cnt={days}&appid={API_KEYS['JOSHUA']}&units={units}"
     
     # Make the HTTP GET request to OpenWeatherMap API
     response = requests.get(url)

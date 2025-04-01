@@ -24,8 +24,16 @@ function getWeatherBackground(weatherCondition) {
   }
 }
 
-function WeatherConditionsPage({ weatherData }) {
+function WeatherConditionsPage({ weatherData, units }) {
   if (!weatherData) return <p>Error: Weather Data Not Found</p>;
+
+  if (units === 'metric') {
+    var tempSymbol = '°C';
+    var speedSymbol = 'km/h';
+  } else {
+    var tempSymbol = '°F';
+    var speedSymbol = 'mph';
+  }
 
   return (
     
@@ -66,9 +74,9 @@ function WeatherConditionsPage({ weatherData }) {
           <div className="wind-container"> {/* Wind container to combine wind speed, direction, and gust */}
             
             {/* Wind statistics display in MPH and Degrees (due to 'units=imperial' in the URL) */}
-            <p className="wind-speed"><strong>Wind Speed: </strong>{weatherData.wind_speed} mph</p> {/* Wind speed in mph */}
+            <p className="wind-speed"><strong>Wind Speed: </strong>{weatherData.wind_speed} {speedSymbol}</p> {/* Wind speed in mph */}
             <p className="wind-direction"><strong>Wind Direction: </strong>{weatherData.wind_direction}°</p> {/* Wind direction in degrees */}
-            <p className="wind-gust"><strong>Wind Gust: </strong>{weatherData.wind_gust} mph</p> {/* Wind gust speed in mph */}
+            <p className="wind-gust"><strong>Wind Gust: </strong>{weatherData.wind_gust} {speedSymbol}</p> {/* Wind gust speed in mph */}
           
           </div> {/* Wind-Container end */}
         
@@ -77,10 +85,10 @@ function WeatherConditionsPage({ weatherData }) {
         <div className="right-column">{/* Right Column Container - Displays temperature-related data */}
           
           {/* Temperature Stats display in Fahrenheit (due to 'units=imperial' in the URL) */}
-          <p className="temperature"><strong>Current Temperature:</strong> {weatherData.temperature}°F</p> {/* Displays Current temperature */}
-          <p><strong>Feels Like:</strong> {weatherData.feels_like}°F</p> {/* Displays Feels like temperature */}
-          <p><strong>Today's High:</strong> {weatherData.temp_max}°F</p> {/* Displays Today's maximum temperature */}
-          <p><strong>Today's Low:</strong> {weatherData.temp_min}°F</p> {/* Displays Today's minimum temperature */}
+          <p className="temperature"><strong>Current Temperature:</strong> {weatherData.temperature}{tempSymbol}</p> {/* Displays Current temperature */}
+          <p><strong>Feels Like:</strong> {weatherData.feels_like}{tempSymbol}</p> {/* Displays Feels like temperature */}
+          <p><strong>Today's High:</strong> {weatherData.temp_max}{tempSymbol}</p> {/* Displays Today's maximum temperature */}
+          <p><strong>Today's Low:</strong> {weatherData.temp_min}{tempSymbol}</p> {/* Displays Today's minimum temperature */}
         
         </div> {/* Right-Column end */}
       
