@@ -72,34 +72,37 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
 
   return (
     <div className={containerClass}>
-      {!embedded && <h2 className="location">Seven Day Forecast for {defaultLocation}</h2>}
+      {!embedded && (
+        <div className="header-forecast-container">
+          <div className="header-forecast-background">
+            <h2>Seven Day Forecast for {defaultLocation}</h2>
+          </div>
+          
+        </div>
+      )}
       {embedded && <h3>7-Day Forecast</h3>}
 
-      <button className="expand-button" onClick={() => setDetailedView(!detailedView)}>
-        {detailedView ? "Hide Details" : "View Detailed Forecast"}
-      </button>
-
-      <div className={detailedView ? "detailed-view" : "compact-view"}>
+      <div className={detailedView ? "forecast-detailed-view" : "forecast-compact-view"}>
         {forecast.map((day, index) => (
-          <div
-            key={index}
-            className="forecast-day"
-            style={{
-              backgroundImage: `url(${getWeatherBackground(day.weather.main)})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              color: "#ffffff",
-              textShadow: "1px 1px 3px rgba(0, 0, 0, 0.8)",
-            }}
-          >
-            <p>{day.date}</p>
-            <p>{day.weather.main}</p>
-            <p>{day.weather.description}</p>
-            <p>{Math.round(day.temperature.high)}°F</p>
+          <div key={index} className={`forecast-day ${getWeatherBackground(day.weather.main)}`}>
+            <div className = "text-background">
+              <p>{day.date}</p>
+              <img src={day.weather.icon} alt="Weather Icon"></img>
+              <p>{day.weather.main}</p>
+              <p>{day.weather.description}</p>
+              <p>{Math.round(day.temperature.high)}°F</p>
+            </div>
           </div>
         ))}
       </div>
+
+      {!embedded && (
+        <button className="expand-button" onClick={() => setDetailedView(!detailedView)}>
+          {detailedView ? "Hide Details" : "View Detailed Forecast"}
+        </button>
+      )}
+
+
     </div>
   );
 }
