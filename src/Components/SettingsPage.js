@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./SettingsPage.css";
 
 function SettingsPage({ setTheme, theme, setUnits, units, setDefaultLocation, defaultLocation }) {
+  const [locationSetting, setLocationSetting] = useState(defaultLocation)
 
   // Handle input changes
   const handleChange = (e) => {
@@ -11,7 +12,7 @@ function SettingsPage({ setTheme, theme, setUnits, units, setDefaultLocation, de
     } else if (name === "units") {
       setUnits(value);
     } else {
-      setDefaultLocation(value);
+      setDefaultLocation(locationSetting);
     }
   };
 
@@ -58,8 +59,13 @@ function SettingsPage({ setTheme, theme, setUnits, units, setDefaultLocation, de
             type="text" 
             id="defaultCity" 
             name="defaultCity" 
-            value={defaultLocation} 
-            onChange={handleChange} 
+            value={locationSetting} 
+            onChange={(e) => setLocationSetting(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleChange(e);
+              }
+            }} 
             placeholder="Enter city name"
           />
         </div>
