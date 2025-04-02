@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import './Header.css';
 import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils"; // Import Backend constants
 
-const Header = ({ setWeatherData, setActivePage, units }) => {
+const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLocation, units }) => {
     const [locationData, setLocationData] = useState({
         name: "Allow location access...",
         weather: "N/A",
@@ -12,6 +12,7 @@ const Header = ({ setWeatherData, setActivePage, units }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [locationError, setLocationError] = useState(null);
     const [city, setCity] = useState("");
+    const [locationObtained, setLocationObtained] = useState(null);
 
     if (units === 'metric') {
         var tempSymbol = '°C';
@@ -22,9 +23,9 @@ const Header = ({ setWeatherData, setActivePage, units }) => {
     }
 
     // Fetch weather data based on user location
-    const fetchUserLocationWeather = async (latitude, longitude) => {
+    const fetchWeatherForUserLocation = async (locationName) => {
         try {
-            const response = await fetch(`${ BACKEND_BASE_URLS.USER_CONDITIONS }${ BACKEND_ENDPOINTS.USER_CONDITIONS}?lat=${latitude}&lon=${longitude}&units=${units}`);
+            const response = await fetch(`${BACKEND_BASE_URLS.USER_CONDITIONS}${BACKEND_ENDPOINTS.USER_CONDITIONS}?city=${locationName}&units=${units}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -35,33 +36,53 @@ const Header = ({ setWeatherData, setActivePage, units }) => {
                 temperature: data.main.temp || "N/A",
             });
         } catch (error) {
-            console.error("Error fetching location-based weather:", error);
-            setLocationError("Failed to load location-based weather.");
+            console.error("Error fetching location weather:", error);
+            setLocationError("Failed to load location weather.");
         } finally {
             setIsLoading(false);
         }
     };
-    
 
-    // Get user's geolocation on page load
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    fetchUserLocationWeather(latitude, longitude);
-                },
-                (error) => {
-                    console.error("Geolocation error:", error);
-                    setLocationError("Location access denied. Enable location to view weather.");
-                    setIsLoading(false);
-                }
-            );
-        } else {
-            setLocationError("Geolocation not supported.");
+    const fetchCityName = async (lat, lon) => {
+        try {
+            const response = await fetch(`${BACKEND_BASE_URLS.NAME}${BACKEND_ENDPOINTS.NAME}?lat=${lat}&lon=${lon}`)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setDefaultLocation(data[0].name || defaultLocation);
+        } catch (error) {
+            console.error("Error fetching city name based on location coordinates. Using Default Location");
+        } finally {
             setIsLoading(false);
         }
-    }, []);
+    }
+    
+    useEffect(() => {
+        if (!locationObtained) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        fetchCityName(latitude, longitude)
+                        fetchWeatherForUserLocation(defaultLocation);
+                        setLocationObtained(true);
+                    },
+                    (error) => {
+                        console.log("Geolocation Not Approved. Using Default Location");
+                        fetchWeatherForUserLocation(defaultLocation);
+                    }
+                );
+            } else {
+                console.warn("Geolocation error. Fetching weather for default location.");
+                fetchWeatherForUserLocation(defaultLocation);
+            }
+        } else {
+            fetchWeatherForUserLocation(defaultLocation);
+        }
+        
+    }, [defaultLocation]);
+
 
     const fetchWeather = async () => {
         if (!city) return;

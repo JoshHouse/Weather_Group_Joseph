@@ -42,7 +42,7 @@ function App() {
                               setUnits={setUnits} units={units} 
                               setDefaultLocation={setDefaultLocation} defaultLocation={defaultLocation} />; // Settings page passes theme to app.js
       case "forecast":
-        return <WeeklyForecast />
+        return <WeeklyForecast defaultLocation={defaultLocation} units={units} embedded={false} />
       case "home":  // Called when home or exit are pressed
         return <HomePage />
       default: // Called by default
@@ -63,7 +63,11 @@ function App() {
 
           <div id="header-bar"> {/* header bar wrapper div */}
             {/* pass handleSearch so header can access it */}
-            <Header setWeatherData={setWeatherData} setActivePage={setActivePage} units={units} />
+            <Header setWeatherData={setWeatherData} 
+                    setActivePage={setActivePage} 
+                    setDefaultLocation={setDefaultLocation} 
+                    defaultLocation={defaultLocation} 
+                    units={units} />
           </div>
         
         </div>

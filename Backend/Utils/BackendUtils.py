@@ -1,10 +1,9 @@
 API_URLS = {
   "WEATHER": "https://api.openweathermap.org/data/2.5/weather",
-  "FORECAST": "https://api.openweathermap.org/data/2.5/forecast",
+  "FORECAST": "https://api.openweathermap.org/data/3.0/onecall",
   "UV_INDEX": "/api/uv-index",
   "AIR_QUALITY": "/api/air-quality",
-  "COMPARE": "/api/compare",
-  "SETTINGS": "/api/settings"
+  "NAME": "https://api.openweathermap.org/geo/1.0/reverse"
 }
 
 API_KEYS = {

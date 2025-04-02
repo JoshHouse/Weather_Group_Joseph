@@ -68,7 +68,8 @@ export const formatDate = (dateString) => {
 export const BACKEND_ENDPOINTS = {
   SAVED_SEARCHES: "/saved_searches",
   USER_CONDITIONS: "/user_location_weather",
-  WEATHER_FORECAST: "/forecast"
+  WEATHER_FORECAST: "/forecast",
+  NAME: "/name"
 }
 
 /**
@@ -79,4 +80,5 @@ export const BACKEND_BASE_URLS = {
   SAVED_SEARCHES: "http://127.0.0.1:5001",
   USER_CONDITIONS: "http://127.0.0.1:5002",
   WEATHER_FORECAST: "http://127.0.0.1:5003",
+  NAME: "http://127.0.0.1:5004"
 }
