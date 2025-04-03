@@ -81,7 +81,7 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
             fetchWeatherForUserLocation(defaultLocation);
         }
         
-    }, [defaultLocation]);
+    }, [defaultLocation, units]);
 
 
     const fetchWeather = async () => {

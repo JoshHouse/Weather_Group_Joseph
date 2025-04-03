@@ -30,7 +30,7 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
   const fetchUserLocationForecast = async (days) => {
     try {
       const response = await fetch(`${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${defaultLocation}&units=${units}`);
-      
+      console.log(`Backend Forecast URL: ${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${defaultLocation}&units=${units}`)
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       
       const data = await response.json();
@@ -66,9 +66,9 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
     });
   }
 
-  if (embedded && loading === true) {
+  if (embedded && loading) {
     fetchUserLocationForecast(5);
-  } else if (loading === true) {
+  } else if (loading) {
     fetchUserLocationForecast(7);
   }
 
