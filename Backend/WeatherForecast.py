@@ -45,4 +45,4 @@ def get_forecast():
     return jsonify(forecast_response.json())
 
 if __name__ == '__main__':
-    app.run(port=5003, debug=True)
+    app.run(port=5002, debug=True)

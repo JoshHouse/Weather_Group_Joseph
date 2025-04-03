@@ -25,7 +25,7 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
     // Fetch weather data based on user location
     const fetchWeatherForUserLocation = async (locationName) => {
         try {
-            const response = await fetch(`${BACKEND_BASE_URLS.USER_CONDITIONS}${BACKEND_ENDPOINTS.USER_CONDITIONS}?city=${locationName}&units=${units}`);
+            const response = await fetch(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationName}&units=${units}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

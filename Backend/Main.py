@@ -12,9 +12,8 @@ def home():
 
 scripts = [
     (os.path.join(os.path.dirname(__file__), 'SavedSearches.py'), 5001),
-    (os.path.join(os.path.dirname(__file__), 'UserLocationWeather.py'), 5002),
-    (os.path.join(os.path.dirname(__file__), 'WeatherForecast.py'), 5003),
-    (os.path.join(os.path.dirname(__file__), 'GetCityName.py'), 5004)
+    (os.path.join(os.path.dirname(__file__), 'WeatherForecast.py'), 5002),
+    (os.path.join(os.path.dirname(__file__), 'GetCityName.py'), 5003)
 ]
 
 processes = []

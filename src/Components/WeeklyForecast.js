@@ -19,6 +19,14 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  if (units === 'metric') {
+    var tempSymbol = '°C';
+    var speedSymbol = 'km/h';
+  } else {
+    var tempSymbol = '°F';
+    var speedSymbol = 'mph';
+  }
+
   const fetchUserLocationForecast = async (days) => {
     try {
       const response = await fetch(`${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${defaultLocation}&units=${units}`);
@@ -90,7 +98,7 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
               <img src={day.weather.icon} alt="Weather Icon"></img>
               <p>{day.weather.main}</p>
               <p>{day.weather.description}</p>
-              <p>{Math.round(day.temperature.high)}°F</p>
+              <p>{Math.round(day.temperature.high)}{tempSymbol}</p>
             </div>
           </div>
         ))}
