@@ -79,7 +79,7 @@ function WeatherComparisonMenu({ units }) {
     if (locationOneData && locationTwoData) {
       
       const result = {
-        tempDifference: `${locationOneData.temp}${tempSymbol} vs ${locationTwoData.temp}${tempSymbol} (${locationOneData.temp - locationTwoData.temp}${tempSymbol} difference)`,
+        tempDifference: `${locationOneData.temp}${tempSymbol} vs ${locationTwoData.temp}${tempSymbol} (${Number((locationOneData.temp - locationTwoData.temp).toFixed(2))}${tempSymbol} difference)`,
         feelsLikeDifference: `${locationOneData.feelsLike}${tempSymbol} vs ${locationTwoData.feelsLike}${tempSymbol}`,
         conditionComparison: `${locationOneData.condition} vs ${locationTwoData.condition}`,
         windSpeedComparison: `${locationOneData.windSpeed}${speedSymbol} vs ${locationTwoData.windSpeed}${speedSymbol}`,
