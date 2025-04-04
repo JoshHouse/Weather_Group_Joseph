@@ -88,7 +88,7 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
           
         </div>
       )}
-      {embedded && <h3>7-Day Forecast</h3>}
+      {embedded && <h3>5-Day Forecast</h3>}
 
       <div className={detailedView ? "forecast-detailed-view" : "forecast-compact-view"}>
         {forecast.map((day, index) => (
