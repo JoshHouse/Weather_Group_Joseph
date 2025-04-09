@@ -69,7 +69,11 @@ export const BACKEND_ENDPOINTS = {
   SAVED_SEARCHES: "/saved_searches",
   WEATHER_FORECAST: "/forecast",
   NAME: "/name",
-  COORDINATES: "/coordinates"
+  COORDINATES: "/coordinates",
+  GOOGLE_MAPS_KEY: "/google-maps-key",
+  GEOCODE: "/geocode",
+  SEARCH_SUGGESTIONS: "/suggestions",
+  RECENT_SEARCHES: "/recent-searches"
 }
 
 /**
@@ -80,5 +84,7 @@ export const BACKEND_BASE_URLS = {
   SAVED_SEARCHES: "http://127.0.0.1:5001",
   WEATHER_FORECAST: "http://127.0.0.1:5002",
   NAME: "http://127.0.0.1:5003",
-  COORDINATES: "http://127.0.0.1:5004"
+  COORDINATES: "http://127.0.0.1:5004",
+  GOOGLE_MAPS: "http://127.0.0.1:5005",
+  SUGGESTED_SEARCHES: "http://127.0.0.1:5006"
 }

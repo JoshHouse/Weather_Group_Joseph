@@ -53,15 +53,34 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
     return apiResponse.daily.slice(0, count).map((day) => {
       return {
         date: new Date(day.dt * 1000).toLocaleDateString(), // Convert timestamp to readable date
+        dayOfWeek: new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
         temperature: {
           high: day.temp.max.toFixed(1),
           low: day.temp.min.toFixed(1),
+          morning: day.temp.morn.toFixed(1),
+          day: day.temp.day.toFixed(1),
+          evening: day.temp.eve.toFixed(1),
+          night: day.temp.night.toFixed(1),
+        },
+        feels_like: {
+          day: day.feels_like.day.toFixed(1),
+          night: day.feels_like.night.toFixed(1),
         },
         weather: {
           main: day.weather[0].main,
           description: day.weather[0].description,
           icon: `https://openweathermap.org/img/wn/${day.weather[0].icon}.png`, // Weather icon URL
         },
+        // Additional data for detailed view
+        humidity: day.humidity,
+        wind_speed: day.wind_speed,
+        wind_deg: day.wind_deg,
+        pressure: day.pressure,
+        uvi: day.uvi,
+        pop: (day.pop * 100).toFixed(0), // Probability of precipitation as percentage
+        rain: day.rain || 0,
+        sunrise: new Date(day.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sunset: new Date(day.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
     });
   }
@@ -90,19 +109,74 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
       )}
       {embedded && <h3>5-Day Forecast</h3>}
 
-      <div className={detailedView ? "forecast-detailed-view" : "forecast-compact-view"}>
-        {forecast.map((day, index) => (
-          <div key={index} className={`forecast-day ${getWeatherBackground(day.weather.main)}`}>
-            <div className = "text-background">
-              <p>{day.date}</p>
-              <img src={day.weather.icon} alt="Weather Icon"></img>
-              <p>{day.weather.main}</p>
-              <p>{day.weather.description}</p>
-              <p>{Math.round(day.temperature.high)}{tempSymbol}</p>
+      {/* Conditional rendering based on view mode */}
+      {!detailedView ? (
+        // Compact view
+        <div className="forecast-compact-view">
+          {forecast.map((day, index) => (
+            <div key={index} className={`forecast-day ${getWeatherBackground(day.weather.main)}`}>
+              <div className="text-background">
+                <p className="forecast-date">{day.dayOfWeek}, {day.date}</p>
+                <img src={day.weather.icon} alt="Weather Icon" />
+                <p className="forecast-condition">{day.weather.main}</p>
+                <p className="forecast-description">{day.weather.description}</p>
+                <p className="forecast-temp-high">{Math.round(day.temperature.high)}{tempSymbol}</p>
+                <p className="forecast-temp-low">{Math.round(day.temperature.low)}{tempSymbol}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        // Detailed view
+        <div className="forecast-detailed-view">
+          {forecast.map((day, index) => (
+            <div key={index} className="forecast-day-detailed">
+              <div className="forecast-day-header">
+                <h3>{day.dayOfWeek}, {day.date}</h3>
+                <div className="weather-summary">
+                  <img src={day.weather.icon} alt="Weather Icon" className="weather-icon-large" />
+                  <div>
+                    <p className="forecast-condition">{day.weather.main}</p>
+                    <p className="forecast-description">{day.weather.description}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="forecast-day-content">
+                <div className="temperature-section">
+                  <h4>Temperature</h4>
+                  <div className="temp-details">
+                    <p><strong>High:</strong> {day.temperature.high}{tempSymbol}</p>
+                    <p><strong>Low:</strong> {day.temperature.low}{tempSymbol}</p>
+                    <p><strong>Morning:</strong> {day.temperature.morning}{tempSymbol}</p>
+                    <p><strong>Day:</strong> {day.temperature.day}{tempSymbol}</p>
+                    <p><strong>Evening:</strong> {day.temperature.evening}{tempSymbol}</p>
+                    <p><strong>Night:</strong> {day.temperature.night}{tempSymbol}</p>
+                    <p><strong>Feels Like (Day):</strong> {day.feels_like.day}{tempSymbol}</p>
+                    <p><strong>Feels Like (Night):</strong> {day.feels_like.night}{tempSymbol}</p>
+                  </div>
+                </div>
+                
+                <div className="conditions-section">
+                  <h4>Conditions</h4>
+                  <p><strong>Humidity:</strong> {day.humidity}%</p>
+                  <p><strong>Wind:</strong> {day.wind_speed} {speedSymbol}</p>
+                  <p><strong>Pressure:</strong> {day.pressure} hPa</p>
+                  <p><strong>UV Index:</strong> {day.uvi}</p>
+                  <p><strong>Precipitation Chance:</strong> {day.pop}%</p>
+                  {day.rain > 0 && <p><strong>Rain:</strong> {day.rain} mm</p>}
+                </div>
+                
+                <div className="sun-section">
+                  <h4>Sun</h4>
+                  <p><strong>Sunrise:</strong> {day.sunrise}</p>
+                  <p><strong>Sunset:</strong> {day.sunset}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {!embedded && (
         <button className="expand-button" onClick={() => setDetailedView(!detailedView)}>

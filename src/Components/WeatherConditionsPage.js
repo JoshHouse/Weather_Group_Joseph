@@ -1,6 +1,7 @@
 // Import necessary libraries
 import React from "react"; // React hooks: useState for managing state, useEffect for handling side effects
 import "./WeatherConditionsPage.css"; // Import Component CSS styling
+import WeeklyForecast from "./WeeklyForecast"; // Import WeeklyForecast component
 
 // Function to get the appropriate weather background GIF based on the weather condition
 function getWeatherBackground(weatherCondition) {
@@ -93,8 +94,15 @@ function WeatherConditionsPage({ weatherData, units }) {
         </div> {/* Right-Column end */}
       
       </div> {/* Columns-Container end */}
-    
-    {/* Weather-Container end */}
+      
+      {/* Integrated Weekly Forecast Section */}
+      <div className="forecast-section">
+        <WeeklyForecast 
+          defaultLocation={weatherData.name} 
+          units={units} 
+          embedded={true} 
+        />
+      </div>
     </div>
   );
 }

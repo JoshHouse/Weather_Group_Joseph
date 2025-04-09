@@ -17,7 +17,7 @@ function HomePage({ searchedCity }) {
         setError(null);
 
         try {
-          const response = await axios.get(`${BACKEND_BASE_URLS.USER_CONDITIONS}${BACKEND_ENDPOINTS.USER_CONDITIONS}?city=${searchedCity}`);
+          const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${searchedCity}`);
           setWeatherData(response.data);
           
           // If the API response includes coordinates, update the state
@@ -54,7 +54,7 @@ function HomePage({ searchedCity }) {
 
       try {
         const locationQuery = formatLocationQuery(`${newCoordinates.lat},${newCoordinates.lng}`);
-        const response = await axios.get(`${BACKEND_BASE_URL}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationQuery}`);
+        const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationQuery}`);
         setWeatherData(response.data);
       } catch (err) {
         console.error("Error fetching weather for coordinates:", err);

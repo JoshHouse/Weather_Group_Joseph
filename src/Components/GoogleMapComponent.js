@@ -1,191 +1,193 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import './GoogleMapComponent.css';
-
-// Default map container style - now full height
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-  minHeight: '500px'
-};
-
-// Default center (will be overridden if coordinates are provided)
-const defaultCenter = {
-  lat: 51.5074, // London coordinates as default
-  lng: -0.1278
-};
-
-// Google Maps API key - Using direct value to avoid process.env issues in browser
-// In a production environment, this should be properly configured with webpack
-const API_KEY = 'AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik';
-
-// Check if we have a valid API key
-const hasValidApiKey = API_KEY && API_KEY !== '' && !API_KEY.includes('YOUR_');
-
-// Placeholder Map Component when API key is not available
-const PlaceholderMap = ({ city, coordinates }) => {
-  const location = city || 'Selected Location';
-  const lat = coordinates?.lat || defaultCenter.lat;
-  const lng = coordinates?.lng || defaultCenter.lng;
-  
-  return (
-    <div className="placeholder-map">
-      <div className="placeholder-map-content">
-        <h4>Map Preview Unavailable</h4>
-        <p>A valid Google Maps API key is required to display the map.</p>
-        <div className="placeholder-map-info">
-          <p><strong>Location:</strong> {location}</p>
-          <p><strong>Coordinates:</strong> {lat.toFixed(4)}, {lng.toFixed(4)}</p>
-        </div>
-        <div className="placeholder-map-instructions">
-          <p>To enable maps:</p>
-          <ol>
-            <li>Obtain a Google Maps API key from the <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud Console</a></li>
-            <li>Add the API key to your environment variables as REACT_APP_GOOGLE_MAPS_API_KEY</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  );
-};
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import "./GoogleMapComponent.css";
+import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils";
 
 function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
-  // Only attempt to load the API if we have a valid key
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: API_KEY
-  });
-
-  // State for the map instance
+  const [apiKey, setApiKey] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [map, setMap] = useState(null);
-  // State for the selected location marker
   const [marker, setMarker] = useState(null);
-  // State for the info window
-  const [infoWindow, setInfoWindow] = useState(null);
-  // State for map center
-  const [center, setCenter] = useState(defaultCenter);
+  const mapRef = useRef(null);
 
-  // Update center when coordinates change
+  // Fetch Google Maps API key from backend
   useEffect(() => {
-    if (coordinates && coordinates.lat && coordinates.lng) {
-      setCenter({
-        lat: parseFloat(coordinates.lat),
-        lng: parseFloat(coordinates.lng)
-      });
+    const fetchApiKey = async () => {
+      try {
+        const response = await axios.get(
+          `${BACKEND_BASE_URLS.GOOGLE_MAPS}${BACKEND_ENDPOINTS.GOOGLE_MAPS_KEY}`
+        );
+        setApiKey(response.data.apiKey);
+      } catch (err) {
+        console.error("Error fetching Google Maps API key:", err);
+        setError("Failed to load Google Maps API key. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchApiKey();
+  }, []);
+
+  // Load Google Maps JavaScript API
+  useEffect(() => {
+    if (!apiKey) return;
+
+    // Check if API is already loaded
+    if (window.google && window.google.maps) {
+      setMapLoaded(true);
+      return;
+    }
+
+    const loadGoogleMapsAPI = () => {
+      // Create script element
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.defer = true;
       
-      // Set marker at the new center
-      setMarker({
-        position: {
-          lat: parseFloat(coordinates.lat),
-          lng: parseFloat(coordinates.lng)
-        },
-        title: city || 'Selected Location'
-      });
-    } else if (city) {
-      // If we have a city name but no coordinates, we could geocode here
-      // For now, we'll just use the default center
-      console.log(`No coordinates available for ${city}, using default center`);
-    }
-  }, [coordinates, city]);
+      // Set up callback
+      window.initMap = () => {
+        setMapLoaded(true);
+      };
+      script.onload = window.initMap;
+      
+      // Handle script loading error
+      script.onerror = () => {
+        setError("Failed to load Google Maps. Please check your internet connection.");
+        setLoading(false);
+      };
+      
+      // Add script to document
+      document.head.appendChild(script);
+    };
 
-  // Callback when the map is loaded
-  const onLoad = useCallback(function callback(map) {
-    setMap(map);
-  }, []);
+    loadGoogleMapsAPI();
 
-  // Callback when the map is unmounted
-  const onUnmount = useCallback(function callback(map) {
-    setMap(null);
-  }, []);
+    // Cleanup function to remove script if component unmounts during loading
+    return () => {
+      if (window.initMap) {
+        delete window.initMap;
+      }
+    };
+  }, [apiKey]);
 
-  // Handle map click to set a marker and get coordinates
-  const handleMapClick = (event) => {
-    const clickedLat = event.latLng.lat();
-    const clickedLng = event.latLng.lng();
-    
-    // Set marker at clicked position
-    setMarker({
-      position: {
-        lat: clickedLat,
-        lng: clickedLng
-      },
-      title: 'Selected Location'
-    });
-    
-    // Call the callback with the selected coordinates
-    if (onLocationSelect) {
-      onLocationSelect({
-        lat: clickedLat,
-        lng: clickedLng
-      });
-    }
-    
-    // Close any open info window
-    setInfoWindow(null);
-  };
+  // Initialize map when API is loaded and either coordinates are provided or city changes
+  useEffect(() => {
+    if (!mapLoaded) return;
 
-  // Handle marker click to show info window
-  const handleMarkerClick = () => {
-    if (marker) {
-      setInfoWindow({
-        position: marker.position,
-        content: marker.title
-      });
-    }
-  };
-
-  // Handle info window close
-  const handleInfoWindowClose = () => {
-    setInfoWindow(null);
-  };
-
-  // Show loading error if the API fails to load
-  if (loadError) {
-    return <div className="map-error">Error loading Google Maps API: {loadError.message}</div>;
-  }
-
-  // Show loading indicator while the API is loading
-  if (!isLoaded) {
-    return <div className="map-loading">Loading Google Maps...</div>;
-  }
-
-  return (
-    <div className="google-map-container">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={10}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        onClick={handleMapClick}
-        options={{
-          fullscreenControl: true,
-          streetViewControl: true,
-          mapTypeControl: true,
-          zoomControl: true
-        }}
-      >
-        {/* Render marker if we have one */}
-        {marker && (
-          <Marker
-            position={marker.position}
-            title={marker.title}
-            onClick={handleMarkerClick}
-          />
-        )}
+    const initializeMap = async () => {
+      setLoading(true);
+      try {
+        let mapCenter;
         
-        {/* Render info window if it's open */}
-        {infoWindow && (
-          <InfoWindow
-            position={infoWindow.position}
-            onCloseClick={handleInfoWindowClose}
-          >
-            <div>{infoWindow.content}</div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    </div>
-  );
+        // If coordinates are provided, use them
+        if (coordinates && coordinates.lat && coordinates.lng) {
+          mapCenter = {
+            lat: parseFloat(coordinates.lat),
+            lng: parseFloat(coordinates.lng)
+          };
+        } 
+        // Otherwise, geocode the city name
+        else if (city && city !== "Default Location") {
+          // Use backend proxy for geocoding to hide API key
+          const response = await axios.get(
+            `${BACKEND_BASE_URLS.GOOGLE_MAPS}${BACKEND_ENDPOINTS.GEOCODE}?location=${encodeURIComponent(city)}`
+          );
+          
+          if (response.data.results && response.data.results.length > 0) {
+            const location = response.data.results[0].geometry.location;
+            mapCenter = {
+              lat: location.lat,
+              lng: location.lng
+            };
+          } else {
+            // Default to a central US location if geocoding fails
+            mapCenter = { lat: 39.8283, lng: -98.5795 };
+          }
+        } else {
+          // Default center (Central US)
+          mapCenter = { lat: 39.8283, lng: -98.5795 };
+        }
+
+        // Initialize the map
+        const newMap = new window.google.maps.Map(mapRef.current, {
+          center: mapCenter,
+          zoom: 10,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: false,
+          mapTypeId: window.google.maps.MapTypeId.ROADMAP
+        });
+
+        // Create a marker
+        const newMarker = new window.google.maps.Marker({
+          position: mapCenter,
+          map: newMap,
+          animation: window.google.maps.Animation.DROP,
+          title: city || "Selected Location"
+        });
+
+        // Add click listener to map
+        newMap.addListener("click", (event) => {
+          const clickedLocation = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng()
+          };
+          
+          // Update marker position
+          newMarker.setPosition(clickedLocation);
+          
+          // Call onLocationSelect callback with new coordinates
+          if (onLocationSelect) {
+            onLocationSelect(clickedLocation);
+          }
+        });
+
+        // Save map and marker instances
+        setMap(newMap);
+        setMarker(newMarker);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error initializing Google Maps:", err);
+        setError("Error initializing map. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    initializeMap();
+  }, [mapLoaded, coordinates, city, onLocationSelect]);
+
+  // Update marker position when coordinates change
+  useEffect(() => {
+    if (!map || !marker || !coordinates) return;
+
+    const position = new window.google.maps.LatLng(
+      parseFloat(coordinates.lat),
+      parseFloat(coordinates.lng)
+    );
+    
+    marker.setPosition(position);
+    map.panTo(position);
+  }, [map, marker, coordinates]);
+
+  if (error) {
+    return (
+      <div className="map-error">
+        <div>
+          <p>{error}</p>
+          <p>Please check your internet connection or try again later.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="map-loading">Loading map data...</div>;
+  }
+
+  return <div ref={mapRef} className="google-map-container"></div>;
 }
 
-export default React.memo(GoogleMapComponent);
+export default GoogleMapComponent;

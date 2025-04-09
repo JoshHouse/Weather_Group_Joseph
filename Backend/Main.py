@@ -13,12 +13,14 @@ def home():
     return "SERVER LOG: Main.py is running! "
 
 # An array of python file paths using os to get the relative file paths for different machines
-# 5001, 5002, 5003, and 5004 are the ports the files run on
+# 5001, 5002, 5003, 5004, 5005, and 5006 are the ports the files run on
 scripts = [
     (os.path.join(os.path.dirname(__file__), 'SavedSearches.py'), 5001),
     (os.path.join(os.path.dirname(__file__), 'WeatherForecast.py'), 5002),
     (os.path.join(os.path.dirname(__file__), 'GetCityName.py'), 5003),
-    (os.path.join(os.path.dirname(__file__), 'GetCoordinates.py'), 5004)
+    (os.path.join(os.path.dirname(__file__), 'GetCoordinates.py'), 5004),
+    (os.path.join(os.path.dirname(__file__), 'GoogleMapsAPI.py'), 5005),
+    (os.path.join(os.path.dirname(__file__), 'SuggestedSearches.py'), 5006)
 ]
 
 # Array of running processes

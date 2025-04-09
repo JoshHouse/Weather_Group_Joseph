@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Search, History, MapPin } from "lucide-react";
 import './Header.css';
 import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS } from "../utils/frontEndUtils"; // Import Backend constants
 
@@ -12,15 +12,107 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
     const [isLoading, setIsLoading] = useState(true);
     const [locationError, setLocationError] = useState(null);
     const [city, setCity] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [recentSearches, setRecentSearches] = useState([]);
     const [locationObtained, setLocationObtained] = useState(null);
+    const searchContainerRef = useRef(null);
 
-    if (units === 'metric') {
-        var tempSymbol = '°C';
-        var speedSymbol = 'km/h';
-    } else {
-        var tempSymbol = '°F';
-        var speedSymbol = 'mph';
-    }
+    // Temperature and speed units based on settings
+    const tempSymbol = units === 'metric' ? '°C' : '°F';
+    const speedSymbol = units === 'metric' ? 'km/h' : 'mph';
+
+    // Close suggestions when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Fetch recent searches on mount
+    useEffect(() => {
+        fetchRecentSearches();
+    }, []);
+
+    // Fetch city suggestions based on user input
+    const fetchSuggestions = async (query) => {
+        if (!query || query.length < 2) {
+            setSuggestions([]);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${BACKEND_BASE_URLS.SUGGESTED_SEARCHES}${BACKEND_ENDPOINTS.SEARCH_SUGGESTIONS}?query=${query}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setSuggestions(data);
+        } catch (error) {
+            console.error("Error fetching suggestions:", error);
+            setSuggestions([]);
+        }
+    };
+
+    // Fetch user's recent searches
+    const fetchRecentSearches = async () => {
+        try {
+            const response = await fetch(`${BACKEND_BASE_URLS.SUGGESTED_SEARCHES}${BACKEND_ENDPOINTS.RECENT_SEARCHES}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setRecentSearches(data);
+        } catch (error) {
+            console.error("Error fetching recent searches:", error);
+            setRecentSearches([]);
+        }
+    };
+
+    // Add search to recent searches
+    const addToRecentSearches = async (query) => {
+        try {
+            const response = await fetch(`${BACKEND_BASE_URLS.SUGGESTED_SEARCHES}${BACKEND_ENDPOINTS.RECENT_SEARCHES}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            setRecentSearches(data.recent_searches);
+        } catch (error) {
+            console.error("Error adding to recent searches:", error);
+        }
+    };
+
+    // Handle input change for search
+    const handleSearchInputChange = (e) => {
+        const value = e.target.value;
+        setCity(value);
+        fetchSuggestions(value);
+        setShowSuggestions(true);
+    };
+
+    // Handle suggestion selection
+    const handleSuggestionSelect = (suggestion) => {
+        setCity(suggestion);
+        setShowSuggestions(false);
+        // Automatically search when a suggestion is selected
+        fetchWeatherForCity(suggestion);
+    };
 
     // Fetch weather data based on user location
     const fetchWeatherForUserLocation = async (locationName) => {
@@ -83,17 +175,18 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
         
     }, [defaultLocation, units]);
 
-
-    const fetchWeather = async () => {
-        if (!city) return;
+    const fetchWeatherForCity = async (cityName) => {
+        if (!cityName) return;
+        
+        setIsLoading(true);
     
         try {
-            const response = await fetch(`${ BACKEND_BASE_URLS.SAVED_SEARCHES }${ BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${city}&units=${units}`);
+            const response = await fetch(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${cityName}&units=${units}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch weather data");
             }
             const data = await response.json();
-
+            
             // Format the data before setting state
             const formattedWeatherData = {
                 name: data.name,
@@ -109,31 +202,85 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
                 sunrise: data.sys.sunrise,
                 sunset: data.sys.sunset,
             };
-
+            
             setWeatherData(formattedWeatherData);
             setActivePage("searched");
+            
+            // Add to recent searches
+            addToRecentSearches(cityName);
         } catch (error) {
-            console.error("Error fetching weather data", error);
+            console.error("Error fetching weather data:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <header className="header-container">
-            <div className="search-container">
+            <div className="search-container" ref={searchContainerRef}>
                 <input
                     type="text"
                     placeholder="Search for any city..."
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={handleSearchInputChange}
+                    onFocus={() => setShowSuggestions(true)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        fetchWeather(); // Call the function properly
-                      }
+                        if (e.key === 'Enter') {
+                            fetchWeatherForCity(city);
+                            setShowSuggestions(false);
+                        }
                     }}
                     className="search-input"
                 />
-                <Search className="search-icon" onClick={
-                    fetchWeather} />
+                <Search 
+                    className="search-icon" 
+                    onClick={() => {
+                        fetchWeatherForCity(city);
+                        setShowSuggestions(false);
+                    }} 
+                />
+                
+                {showSuggestions && (city.length > 1 || recentSearches.length > 0) && (
+                    <div className="suggestions-dropdown">
+                        {city.length > 1 && suggestions.length > 0 && (
+                            <div className="suggestions-section">
+                                <div className="suggestions-header">
+                                    <MapPin size={14} />
+                                    <span>Suggestions</span>
+                                </div>
+                                <ul className="suggestions-list">
+                                    {suggestions.map((suggestion, index) => (
+                                        <li 
+                                            key={`suggestion-${index}`} 
+                                            onClick={() => handleSuggestionSelect(suggestion)}
+                                        >
+                                            {suggestion}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        
+                        {recentSearches.length > 0 && (
+                            <div className="suggestions-section">
+                                <div className="suggestions-header">
+                                    <History size={14} />
+                                    <span>Recent Searches</span>
+                                </div>
+                                <ul className="suggestions-list">
+                                    {recentSearches.slice(0, 5).map((search, index) => (
+                                        <li 
+                                            key={`recent-${index}`} 
+                                            onClick={() => handleSuggestionSelect(search)}
+                                        >
+                                            {search}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="weather-info">
@@ -147,7 +294,6 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
                     </>
                 )}
             </div>
-
         </header>
     );
 };
