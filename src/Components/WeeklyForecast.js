@@ -98,31 +98,52 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
   const containerClass = embedded ? "forecast-gap" : "weather-details-container";
 
   return (
-    <div className={containerClass}>
+    <div id={containerClass}>
       {!embedded && (
-        <div className="header-forecast-container">
-          <div className="header-forecast-background">
+        <div id="header-forecast-container">
+          <div id="header-forecast-background">
             <h2>Seven Day Forecast for {defaultLocation}</h2>
           </div>
           
         </div>
       )}
-      {embedded && <h3>5-Day Forecast</h3>}
 
       {/* Conditional rendering based on view mode */}
       {!detailedView ? (
         // Compact view
-        <div className="forecast-compact-view">
+        <div id={`forecast-compact-view-${containerClass}`}>
           {forecast.map((day, index) => (
-            <div key={index} className={`forecast-day ${getWeatherBackground(day.weather.main)}`}>
-              <div className="text-background">
-                <p className="forecast-date">{day.dayOfWeek}, {day.date}</p>
-                <img src={day.weather.icon} alt="Weather Icon" />
-                <p className="forecast-condition">{day.weather.main}</p>
-                <p className="forecast-description">{day.weather.description}</p>
-                <p className="forecast-temp-high">{Math.round(day.temperature.high)}{tempSymbol}</p>
-                <p className="forecast-temp-low">{Math.round(day.temperature.low)}{tempSymbol}</p>
-              </div>
+            <div key={index} id={`forecast-day-${containerClass}`}
+              className={`${getWeatherBackground(day.weather.main)}`}>
+              {!embedded ? (
+                <div id={`text-background-${containerClass}`}>
+                  <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
+                  <img src={day.weather.icon} alt="Weather Icon" />
+                  <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
+                  <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
+                  <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+                  <p id={`forecast-temp-low-${containerClass}`}>{Math.round(day.temperature.low)}{tempSymbol}</p>
+                </div>) : (
+                <div id={`text-background-${containerClass}`}>
+                  <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
+                  <div id="forecast-day-column-container">
+                    <div id="left-day-column">
+                      <img src={day.weather.icon} alt="Weather Icon" />
+                    </div>
+                    <div id="right-day-column">
+                      <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
+                      <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
+                    </div>
+                  </div>
+                  <div id="forecast-day-temp-container">
+                    <p id={`forecast-temp-low-${containerClass}`}>{Math.round(day.temperature.low)}{tempSymbol}</p>
+                    <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+                  </div>
+
+                  
+                </div>
+              )}
+              
             </div>
           ))}
         </div>
