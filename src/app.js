@@ -42,7 +42,7 @@ function App() {
                               setUnits={setUnits} units={units} 
                               setDefaultLocation={setDefaultLocation} defaultLocation={defaultLocation} />; // Settings page passes theme to app.js
       case "forecast":
-        return <WeeklyForecast defaultLocation={defaultLocation} units={units} embedded={false} />
+        return <WeeklyForecast searchLocation={defaultLocation} units={units} embedded={false} weatherData={weatherData} />
       case "home":  // Called when home or exit are pressed
         return <HomePage />
       default: // Called by default

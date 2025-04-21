@@ -50,7 +50,7 @@ function WeatherConditionsPage({ weatherData, units }) {
       <div id="forecast-section">
         <div id="forecast-background">
           <WeeklyForecast 
-            defaultLocation={weatherData.name} 
+            searchLocation={weatherData.name} 
             units={units} 
             embedded={true} 
           />

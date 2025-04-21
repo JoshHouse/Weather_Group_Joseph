@@ -13,7 +13,7 @@ function getWeatherBackground(weatherCondition) {
   return "sunnyGif";
 }
 
-function WeeklyForecast({ defaultLocation, units, embedded }) {
+function WeeklyForecast({ searchLocation, units, embedded }) {
   const [forecast, setForecast] = useState([]);
   const [detailedView, setDetailedView] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -29,11 +29,13 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
 
   const fetchUserLocationForecast = async (days) => {
     try {
-      const response = await fetch(`${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${defaultLocation}&units=${units}`);
-      console.log(`Backend Forecast URL: ${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${defaultLocation}&units=${units}`)
+      let response = await fetch(`${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${searchLocation}&units=${units}`);
+
+      
+      console.log(`Backend Forecast URL: ${BACKEND_BASE_URLS.WEATHER_FORECAST}${BACKEND_ENDPOINTS.WEATHER_FORECAST}?city=${searchLocation}&units=${units}`)
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       
-      const data = await response.json();
+      let data = await response.json();
 
       setForecast(prepareForecastData(data, days))
       setLoading(false);
@@ -85,11 +87,13 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
     });
   }
 
-  if (embedded && loading) {
-    fetchUserLocationForecast(5);
-  } else if (loading) {
-    fetchUserLocationForecast(7);
-  }
+  useEffect(() => {
+    if (embedded) {
+      fetchUserLocationForecast(5);
+    } else {
+      fetchUserLocationForecast(7);
+    }
+  }, [searchLocation, units, embedded]);
 
   if (loading) return <div className="loading-message">Loading forecast data...</div>;
   if (error) return <div className="error-message">{error}</div>;
@@ -102,7 +106,7 @@ function WeeklyForecast({ defaultLocation, units, embedded }) {
       {!embedded && (
         <div id="header-forecast-container">
           <div id="header-forecast-background">
-            <h2>Seven Day Forecast for {defaultLocation}</h2>
+            <h2>Seven Day Forecast for {searchLocation}</h2>
           </div>
           
         </div>
