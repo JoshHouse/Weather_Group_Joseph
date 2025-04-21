@@ -9,8 +9,14 @@ API_URLS = {
 # API_KEY constants to avoid having to write the keys repeatedly
 API_KEYS = {
   "JOSHUA": "a7ecb5d8aaa97f57473de04085971f14",
+<<<<<<< Updated upstream
   "EMMANUEL": "AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik",
   "HUNTER": "1abbb345f5735236601f4c038c1474a9"
+=======
+  "EMMANUEL": "",
+  "HUNTER": "1abbb345f5735236601f4c038c1474a9",
+  "GOOGLE_MAPS": "AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik"
+>>>>>>> Stashed changes
 }
 
 # BACKEND_URL constants, specifically for name and coordinate conversions to help 

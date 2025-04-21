@@ -44,7 +44,7 @@ function App() {
       case "forecast":
         return <WeeklyForecast defaultLocation={defaultLocation} units={units} embedded={false} />
       case "home":  // Called when home or exit are pressed
-        return <HomePage />
+        return <HomePage searchedCity={defaultLocation} units={units}/>
       default: // Called by default
         return <HomePage />;
     }
