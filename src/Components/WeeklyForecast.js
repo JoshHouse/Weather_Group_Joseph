@@ -15,7 +15,7 @@ function getWeatherBackground(weatherCondition) {
 
 function WeeklyForecast({ searchLocation, units, embedded }) {
   const [forecast, setForecast] = useState([]);
-  const [detailedView, setDetailedView] = useState(false);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,6 +26,12 @@ function WeeklyForecast({ searchLocation, units, embedded }) {
     var tempSymbol = '°F';
     var speedSymbol = 'mph';
   }
+
+  // Handler for toggling detailed day view
+  const handleDayClick = (index) => {
+    setSelectedDayIndex(prevIndex => prevIndex === index ? null : index);
+  };
+
 
   const fetchUserLocationForecast = async (days) => {
     try {
@@ -113,103 +119,101 @@ function WeeklyForecast({ searchLocation, units, embedded }) {
       )}
 
       {/* Conditional rendering based on view mode */}
-      {!detailedView ? (
-        // Compact view
-        <div id={`forecast-compact-view-${containerClass}`}>
-          {forecast.map((day, index) => (
-            <div key={index} id={`forecast-day-${containerClass}`}
-              className={`${getWeatherBackground(day.weather.main)}`}>
-              {!embedded ? (
-                <div id={`text-background-${containerClass}`}>
-                  <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
-                  <img src={day.weather.icon} alt="Weather Icon" />
-                  <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
-                  <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
-                  <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+      {/* Compact view */}
+      <div id={`forecast-compact-view-${containerClass}`}>
+        {forecast.map((day, index) => (
+          <div key={index} id={`forecast-day-${containerClass}`}
+            className={`${getWeatherBackground(day.weather.main)}`}
+            onClick={() => !embedded && handleDayClick(index)}
+            style={{ cursor: embedded ? 'default' : 'pointer' }}>
+            {!embedded ? (
+              <div id={`text-background-${containerClass}`}>
+                <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
+                <img src={day.weather.icon} alt="Weather Icon" />
+                <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
+                <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
+                <div id="forecast-day-temp-container">
                   <p id={`forecast-temp-low-${containerClass}`}>{Math.round(day.temperature.low)}{tempSymbol}</p>
-                </div>) : (
-                <div id={`text-background-${containerClass}`}>
-                  <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
-                  <div id="forecast-day-column-container">
-                    <div id="left-day-column">
-                      <img src={day.weather.icon} alt="Weather Icon" />
-                    </div>
-                    <div id="right-day-column">
-                      <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
-                      <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
-                    </div>
+                  <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+                </div>
+              </div>) : (
+              <div id={`text-background-${containerClass}`}>
+                <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
+                <div id="forecast-day-column-container">
+                  <div id="left-day-column">
+                    <img src={day.weather.icon} alt="Weather Icon" />
                   </div>
-                  <div id="forecast-day-temp-container">
-                    <p id={`forecast-temp-low-${containerClass}`}>{Math.round(day.temperature.low)}{tempSymbol}</p>
-                    <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+                  <div id="right-day-column">
+                    <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
+                    <p id={`forecast-description-${containerClass}`}>{day.weather.description}</p>
                   </div>
+                </div>
+                <div id="forecast-day-temp-container">
+                  <p id={`forecast-temp-low-${containerClass}`}>{Math.round(day.temperature.low)}{tempSymbol}</p>
+                  <p id={`forecast-temp-high-${containerClass}`}>{Math.round(day.temperature.high)}{tempSymbol}</p>
+                </div>
+              </div>
+            )}
+            
+          </div>
+        ))}
+      </div>
+          
+      {/* Detailed section toggle */}
+      {!embedded && selectedDayIndex !== null && (
+        <div className="forecast-day-content">
+          <div className="temperature-section">
+            <h4>Temperature</h4>
+            <div className="condition-detailed-container">
+              <div className="temp-high-low">
+                <p><strong>High:</strong> {forecast[selectedDayIndex].temperature.high}{tempSymbol}</p>
+                <p><strong>Low:</strong> {forecast[selectedDayIndex].temperature.low}{tempSymbol}</p>
+              </div>
 
-                  
-                </div>
-              )}
-              
-            </div>
-          ))}
-        </div>
-      ) : (
-        // Detailed view
-        <div className="forecast-detailed-view">
-          {forecast.map((day, index) => (
-            <div key={index} className="forecast-day-detailed">
-              <div className="forecast-day-header">
-                <h3>{day.dayOfWeek}, {day.date}</h3>
-                <div className="weather-summary">
-                  <img src={day.weather.icon} alt="Weather Icon" className="weather-icon-large" />
-                  <div>
-                    <p className="forecast-condition">{day.weather.main}</p>
-                    <p className="forecast-description">{day.weather.description}</p>
-                  </div>
-                </div>
+              <div className="temp-morning-day">
+                <p><strong>Morning:</strong> {forecast[selectedDayIndex].temperature.morning}{tempSymbol}</p>
+                <p><strong>Day:</strong> {forecast[selectedDayIndex].temperature.day}{tempSymbol}</p>
               </div>
-              
-              <div className="forecast-day-content">
-                <div className="temperature-section">
-                  <h4>Temperature</h4>
-                  <div className="temp-details">
-                    <p><strong>High:</strong> {day.temperature.high}{tempSymbol}</p>
-                    <p><strong>Low:</strong> {day.temperature.low}{tempSymbol}</p>
-                    <p><strong>Morning:</strong> {day.temperature.morning}{tempSymbol}</p>
-                    <p><strong>Day:</strong> {day.temperature.day}{tempSymbol}</p>
-                    <p><strong>Evening:</strong> {day.temperature.evening}{tempSymbol}</p>
-                    <p><strong>Night:</strong> {day.temperature.night}{tempSymbol}</p>
-                    <p><strong>Feels Like (Day):</strong> {day.feels_like.day}{tempSymbol}</p>
-                    <p><strong>Feels Like (Night):</strong> {day.feels_like.night}{tempSymbol}</p>
-                  </div>
-                </div>
-                
-                <div className="conditions-section">
-                  <h4>Conditions</h4>
-                  <p><strong>Humidity:</strong> {day.humidity}%</p>
-                  <p><strong>Wind:</strong> {day.wind_speed} {speedSymbol}</p>
-                  <p><strong>Pressure:</strong> {day.pressure} hPa</p>
-                  <p><strong>UV Index:</strong> {day.uvi}</p>
-                  <p><strong>Precipitation Chance:</strong> {day.pop}%</p>
-                  {day.rain > 0 && <p><strong>Rain:</strong> {day.rain} mm</p>}
-                </div>
-                
-                <div className="sun-section">
-                  <h4>Sun</h4>
-                  <p><strong>Sunrise:</strong> {day.sunrise}</p>
-                  <p><strong>Sunset:</strong> {day.sunset}</p>
-                </div>
+
+              <div className="temp-evening-night">
+                <p><strong>Evening:</strong> {forecast[selectedDayIndex].temperature.evening}{tempSymbol}</p>
+                <p><strong>Night:</strong> {forecast[selectedDayIndex].temperature.night}{tempSymbol}</p>
+              </div>
+
+              <div className="temp-feels-like">
+                <p><strong>Feels Like (Day):</strong> {forecast[selectedDayIndex].feels_like.day}{tempSymbol}</p>
+                <p><strong>Feels Like (Night):</strong> {forecast[selectedDayIndex].feels_like.night}{tempSymbol}</p>
               </div>
             </div>
-          ))}
+
+          </div>
+          
+          <div className="conditions-section">
+            <h4>Conditions</h4>
+            <div className="condition-detailed-container">
+              <p><strong>Humidity:</strong> {forecast[selectedDayIndex].humidity}%</p>
+              <p><strong>Wind:</strong> {forecast[selectedDayIndex].wind_speed} {speedSymbol}</p>
+              <p><strong>Pressure:</strong> {forecast[selectedDayIndex].pressure} hPa</p>
+              <p><strong>UV Index:</strong> {forecast[selectedDayIndex].uvi}</p>
+              <p><strong>Precipitation Chance:</strong> {forecast[selectedDayIndex].pop}%</p>
+              {forecast[selectedDayIndex].rain > 0 && <p><strong>Rain:</strong> {forecast[selectedDayIndex].rain} mm</p>}
+            </div>
+          </div>
+          
+          <div className="sun-section">
+            <h4>Sun</h4>
+            <div className="condition-detailed-container">
+              <p><strong>Sunrise:</strong> {forecast[selectedDayIndex].sunrise}</p>
+              <p><strong>Sunset:</strong> {forecast[selectedDayIndex].sunset}</p>
+            </div>
+
+          </div>
         </div>
       )}
 
-      {!embedded && (
-        <button className="expand-button" onClick={() => setDetailedView(!detailedView)}>
-          {detailedView ? "Hide Details" : "View Detailed Forecast"}
-        </button>
+      {!embedded && selectedDayIndex === null && (
+        <div className="forecast-day-content"></div>
       )}
-
-
     </div>
   );
 }
