@@ -123,11 +123,14 @@ function WeeklyForecast({ searchLocation, units, embedded }) {
       <div id={`forecast-compact-view-${containerClass}`}>
         {forecast.map((day, index) => (
           <div key={index} id={`forecast-day-${containerClass}`}
-            className={`${getWeatherBackground(day.weather.main)}`}
-            onClick={() => !embedded && handleDayClick(index)}
-            style={{ cursor: embedded ? 'default' : 'pointer' }}>
+            className={`${getWeatherBackground(day.weather.main)}`}>
             {!embedded ? (
-              <div id={`text-background-${containerClass}`}>
+              <div id={`text-background-${containerClass}`} 
+                onClick={() => !embedded && handleDayClick(index)}  
+                style={{
+                  backgroundColor: index == selectedDayIndex ? 'rgba(185, 185, 185, 0.7)' : '',
+                  cursor: embedded ? 'default' : 'pointer'
+                }}>
                 <p id={`forecast-date-${containerClass}`}>{day.dayOfWeek}, {day.date}</p>
                 <img src={day.weather.icon} alt="Weather Icon" />
                 <p id={`forecast-condition-${containerClass}`}>{day.weather.main}</p>
