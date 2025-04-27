@@ -54,8 +54,17 @@ def get_weather():
 
     # ------ Making the API Call ------
 
-    # Construct the url to make the api call
-    url = f"{API_URLS['WEATHER']}?q={city}&appid={API_KEYS['JOSHUA']}&units={units}"
+    # Check if the city parameter contains coordinates (lat,lon format)
+    if ',' in city:
+        try:
+            lat, lon = map(float, city.split(','))
+            # Use lat/lon parameters for coordinates
+            url = f"{API_URLS['WEATHER']}?lat={lat}&lon={lon}&appid={API_KEYS['JOSHUA']}&units={units}"
+        except ValueError:
+            return jsonify({"error": "Invalid coordinates format"}), 400
+    else:
+        # Use city name parameter for city searches
+        url = f"{API_URLS['WEATHER']}?q={city}&appid={API_KEYS['JOSHUA']}&units={units}"
     # Make a request to the url for the weather information
     response = requests.get(url)
 

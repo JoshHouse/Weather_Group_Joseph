@@ -50,6 +50,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  flex: 1;
 }
 
 .map-instruction {

@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from Utils.BackendUtils import API_KEYS
+from config import API_KEYS
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -50,7 +50,10 @@ def geocode_location():
     
     # Get the API key if not already cached
     if not maps_api_key:
-        maps_api_key = API_KEYS.get('GOOGLE_MAPS', 'AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik')
+        maps_api_key = API_KEYS.get('GOOGLE_MAPS')
+        if not maps_api_key:
+            app.logger.error('Google Maps API key not found in config')
+            return jsonify({'error': 'Google Maps API key not configured'}), 500
     
     import requests
     

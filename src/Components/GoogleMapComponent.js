@@ -34,39 +34,54 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
   useEffect(() => {
     if (!apiKey) return;
 
-    // Check if API is already loaded
-    if (window.google && window.google.maps) {
-      setMapLoaded(true);
-      return;
-    }
+    let scriptElement = null;
 
     const loadGoogleMapsAPI = () => {
-      // Create script element
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
+      // Check if API is already loaded
+      if (window.google && window.google.maps) {
+        setMapLoaded(true);
+        return;
+      }
+
+      // Remove any existing Google Maps scripts
+      const existingScript = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+
+      // Create new script element
+      scriptElement = document.createElement("script");
+      scriptElement.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      scriptElement.async = true;
+      scriptElement.defer = true;
       
       // Set up callback
       window.initMap = () => {
         setMapLoaded(true);
+        setLoading(false);
       };
-      script.onload = window.initMap;
+      scriptElement.onload = window.initMap;
       
       // Handle script loading error
-      script.onerror = () => {
+      scriptElement.onerror = () => {
         setError("Failed to load Google Maps. Please check your internet connection.");
         setLoading(false);
       };
       
       // Add script to document
-      document.head.appendChild(script);
+      document.head.appendChild(scriptElement);
     };
 
     loadGoogleMapsAPI();
 
-    // Cleanup function to remove script if component unmounts during loading
+    // Cleanup function
     return () => {
+      if (scriptElement && scriptElement.parentNode) {
+        scriptElement.parentNode.removeChild(scriptElement);
+      }
+      if (window.google && window.google.maps) {
+        delete window.google.maps;
+      }
       if (window.initMap) {
         delete window.initMap;
       }
@@ -75,7 +90,10 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
 
   // Initialize map when API is loaded and either coordinates are provided or city changes
   useEffect(() => {
-    if (!mapLoaded) return;
+    if (!mapLoaded || !mapRef.current || !window.google?.maps) return;
+
+    let mapInstance = null;
+    let markerInstance = null;
 
     const initializeMap = async () => {
       setLoading(true);
@@ -91,33 +109,47 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
         } 
         // Otherwise, geocode the city name
         else if (city && city !== "Default Location") {
-          // Use backend proxy for geocoding to hide API key
-          const response = await axios.get(
-            `${BACKEND_BASE_URLS.GOOGLE_MAPS}${BACKEND_ENDPOINTS.GEOCODE}?location=${encodeURIComponent(city)}`
-          );
-          
-          if (response.data.results && response.data.results.length > 0) {
-            const location = response.data.results[0].geometry.location;
-            mapCenter = {
-              lat: location.lat,
-              lng: location.lng
-            };
+          // Get the center coordinates
+          let mapCenter;
+        
+          if (coordinates) {
+            // Use user's location if available
+            mapCenter = coordinates;
+          } else if (city) {
+            // Use backend proxy for geocoding to hide API key
+            try {
+              const response = await axios.get(
+                `${BACKEND_BASE_URLS.GOOGLE_MAPS}${BACKEND_ENDPOINTS.GEOCODE}?location=${encodeURIComponent(city)}`
+              );
+              
+              if (response.data.results && response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                mapCenter = {
+                  lat: location.lat,
+                  lng: location.lng
+                };
+              } else {
+                mapCenter = { lat: 40.7128, lng: -74.0060 }; // Default to NYC
+              }
+            } catch (error) {
+              console.error("Error geocoding city:", error);
+              mapCenter = { lat: 40.7128, lng: -74.0060 }; // Default to NYC
+            }
           } else {
-            // Default to a central US location if geocoding fails
-            mapCenter = { lat: 39.8283, lng: -98.5795 };
+            mapCenter = { lat: 40.7128, lng: -74.0060 }; // Default to NYC
           }
         } else {
-          // Default center (Central US)
-          mapCenter = { lat: 39.8283, lng: -98.5795 };
+          mapCenter = { lat: 40.7128, lng: -74.0060 }; // Default to NYC
         }
 
         // Initialize the map
         const newMap = new window.google.maps.Map(mapRef.current, {
           center: mapCenter,
-          zoom: 10,
+          zoom: coordinates ? 13 : 10, // Zoom in more for user's location
           mapTypeControl: true,
-          streetViewControl: false,
-          fullscreenControl: false,
+          streetViewControl: true,
+          fullscreenControl: true,
+          zoomControl: true,
           mapTypeId: window.google.maps.MapTypeId.ROADMAP
         });
 
@@ -146,6 +178,8 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
         });
 
         // Save map and marker instances
+        mapInstance = newMap;
+        markerInstance = newMarker;
         setMap(newMap);
         setMarker(newMarker);
         setLoading(false);
@@ -157,6 +191,16 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
     };
 
     initializeMap();
+
+    // Cleanup function
+    return () => {
+      if (markerInstance) {
+        markerInstance.setMap(null);
+      }
+      if (mapInstance) {
+        mapInstance = null;
+      }
+    };
   }, [mapLoaded, coordinates, city, onLocationSelect]);
 
   // Update marker position when coordinates change
@@ -183,11 +227,9 @@ function GoogleMapComponent({ city, coordinates, onLocationSelect }) {
     );
   }
 
-  if (loading) {
-    return <div className="map-loading">Loading map data...</div>;
-  }
-
-  return <div ref={mapRef} className="google-map-container"></div>;
+  return <div ref={mapRef} className="google-map-container">
+    {loading && <div className="map-loading">Loading map data...</div>}
+  </div>;
 }
 
 export default GoogleMapComponent;
