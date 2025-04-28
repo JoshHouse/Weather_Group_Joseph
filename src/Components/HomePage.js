@@ -73,17 +73,33 @@ function HomePage({ searchedCity }) {
     const fetchWeatherForCoordinates = async () => {
       setWeatherLoading(true);
       setError(null);
+      
+      const cityUrl = `${BACKEND_BASE_URLS['NAME']}${BACKEND_ENDPOINTS['NAME']}?lat=${newCoordinates.lat}&lon=${newCoordinates.lng}&units=imperial`;
+
+      let cityName;
 
       try {
-        const locationQuery = formatLocationQuery(`${newCoordinates.lat},${newCoordinates.lng}`);
-        const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${locationQuery}&units=imperial`);
-        setWeatherData(response.data);
-      } catch (err) {
-        console.error("Error fetching weather for coordinates:", err);
-        setError("Failed to load weather data for the selected location.");
-      } finally {
-        setWeatherLoading(false);
+        const cityNameResponse = await axios.get(cityUrl);
+        cityName = cityNameResponse.data[0].name;
+
+        try {
+          const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${cityName}&units=imperial`);
+          setWeatherData(response.data);
+        } catch (err) {
+          console.error("Error fetching weather for coordinates:", err);
+          setError("Failed to load weather data for the selected location.");
+        } finally {
+          setWeatherLoading(false);
+        }
       }
+      catch(err) {
+        console.error("Error fetching city name:", err);
+        setError("Failed to load city name.");
+        setWeatherLoading(false);
+        return; 
+      } 
+
+
     };
 
     fetchWeatherForCoordinates();
