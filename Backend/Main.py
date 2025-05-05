@@ -20,7 +20,8 @@ scripts = [
     (os.path.join(os.path.dirname(__file__), 'GetCityName.py'), 5003),
     (os.path.join(os.path.dirname(__file__), 'GetCoordinates.py'), 5004),
     (os.path.join(os.path.dirname(__file__), 'GoogleMapsAPI.py'), 5005),
-    (os.path.join(os.path.dirname(__file__), 'SuggestedSearches.py'), 5006)
+    (os.path.join(os.path.dirname(__file__), 'SuggestedSearches.py'), 5006),
+    (os.path.join(os.path.dirname(__file__), 'SavedSearchesLatLon.py'), 5007)
 ]
 
 # Array of running processes

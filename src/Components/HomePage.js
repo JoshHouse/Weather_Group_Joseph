@@ -4,11 +4,19 @@ import "./HomePage.css";
 import GoogleMapComponent from "./GoogleMapComponent";
 import { BACKEND_BASE_URLS, BACKEND_ENDPOINTS, formatLocationQuery } from "../utils/frontEndUtils.js";
 
-function HomePage({ searchedCity }) {
+function HomePage({ searchedCity, units }) {
   const [weatherData, setWeatherData] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState(null);
+
+  if (units === 'metric') {
+    var tempSymbol = '°C';
+    var speedSymbol = 'km/h';
+  } else {
+    var tempSymbol = '°F';
+    var speedSymbol = 'mph';
+  }
 
   // Get user's location on component mount
   useEffect(() => {
@@ -39,7 +47,9 @@ function HomePage({ searchedCity }) {
         setError(null);
 
         try {
-          const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${searchedCity}&units=imperial`);
+          const encodedCity = encodeURIComponent(searchedCity);
+          const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${encodedCity}&units=${units}`);
+          
           setWeatherData(response.data);
           
           // If the API response includes coordinates, update the state
@@ -73,37 +83,29 @@ function HomePage({ searchedCity }) {
     const fetchWeatherForCoordinates = async () => {
       setWeatherLoading(true);
       setError(null);
-      
-      const cityUrl = `${BACKEND_BASE_URLS['NAME']}${BACKEND_ENDPOINTS['NAME']}?lat=${newCoordinates.lat}&lon=${newCoordinates.lng}&units=imperial`;
-
-      let cityName;
 
       try {
-        const cityNameResponse = await axios.get(cityUrl);
-        cityName = cityNameResponse.data[0].name;
-
-        try {
-          const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES}${BACKEND_ENDPOINTS.SAVED_SEARCHES}?city=${cityName}&units=imperial`);
-          setWeatherData(response.data);
-        } catch (err) {
-          console.error("Error fetching weather for coordinates:", err);
-          setError("Failed to load weather data for the selected location.");
-        } finally {
-          setWeatherLoading(false);
-        }
-      }
-      catch(err) {
-        console.error("Error fetching city name:", err);
-        setError("Failed to load city name.");
+        const response = await axios.get(`${BACKEND_BASE_URLS.SAVED_SEARCHES_LAT_LON}${BACKEND_ENDPOINTS.SAVED_SEARCHES_LAT_LON}?lat=${newCoordinates.lat}&lon=${newCoordinates.lng}&units=${units}`);
+        
+        setWeatherData(response.data);
+      } catch (err) {
+        console.error("Error fetching weather for coordinates:", err);
+        setError("Failed to load weather data for the selected location.");
+      } finally {
         setWeatherLoading(false);
-        return; 
-      } 
+      }
+
 
 
     };
 
     fetchWeatherForCoordinates();
   };
+
+  function cleanCityName(rawName) {
+    // Only keep the first word or strip extra descriptors
+    return rawName.split(",")[0].split(" - ")[0].trim();
+  }
 
   return (
     <div id='Home-Page-Container'>
@@ -125,7 +127,7 @@ function HomePage({ searchedCity }) {
           {weatherData && (
             <div className="weather-info-minimal">
               <h2>{weatherData.name}</h2>
-              <p className="temp-value">{Math.round(weatherData.main.temp)}°F</p>
+              <p className="temp-value">{Math.round(weatherData.main.temp)}{tempSymbol}</p>
               <p className="condition">{weatherData.weather[0].description}</p>
             </div>
           )}

@@ -44,9 +44,9 @@ function App() {
       case "forecast":
         return <WeeklyForecast searchLocation={defaultLocation} units={units} embedded={false} weatherData={weatherData} />
       case "home":  // Called when home or exit are pressed
-        return <HomePage />
+        return <HomePage units={units}/>
       default: // Called by default
-        return <HomePage />;
+        return <HomePage units={units}/>;
     }
   };
 

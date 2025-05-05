@@ -73,7 +73,8 @@ export const BACKEND_ENDPOINTS = {
   GOOGLE_MAPS_KEY: "/google-maps-key",
   GEOCODE: "/geocode",
   SEARCH_SUGGESTIONS: "/suggestions",
-  RECENT_SEARCHES: "/recent-searches"
+  RECENT_SEARCHES: "/recent-searches",
+  SAVED_SEARCHES_LAT_LON: "/saved_searches_lat_lon"
 }
 
 /**
@@ -86,5 +87,6 @@ export const BACKEND_BASE_URLS = {
   NAME: "http://127.0.0.1:5003",
   COORDINATES: "http://127.0.0.1:5004",
   GOOGLE_MAPS: "http://127.0.0.1:5005",
-  SUGGESTED_SEARCHES: "http://127.0.0.1:5006"
+  SUGGESTED_SEARCHES: "http://127.0.0.1:5006",
+  SAVED_SEARCHES_LAT_LON: "http://127.0.0.1:5007"
 }
