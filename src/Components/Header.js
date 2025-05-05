@@ -135,20 +135,50 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
         }
     };
 
-    const fetchCityName = async (lat, lon) => {
+    const fetchWeatherByCoordinates = async (lat, lon) => {
         try {
-            const response = await fetch(`${BACKEND_BASE_URLS.NAME}${BACKEND_ENDPOINTS.NAME}?lat=${lat}&lon=${lon}`)
+            const response = await fetch(`${BACKEND_BASE_URLS.SAVED_SEARCHES_LAT_LON}${BACKEND_ENDPOINTS.SAVED_SEARCHES_LAT_LON}?lat=${lat}&lon=${lon}&units=${units}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            setDefaultLocation(data[0].name || defaultLocation);
+    
+            // Set the location name from the response
+            const locationName = data.name || "Unknown Location";
+            setDefaultLocation(locationName);
+    
+            // Set location summary box
+            setLocationData({
+                name: locationName,
+                weather: data.weather[0].description || "N/A",
+                temperature: data.main.temp || "N/A",
+            });
+    
+            // Set full weather data (for main view)
+            const formattedWeatherData = {
+                name: locationName,
+                weather: data.weather[0].main,
+                description: data.weather[0].description,
+                temperature: data.main.temp,
+                feels_like: data.main.feels_like,
+                temp_max: data.main.temp_max,
+                temp_min: data.main.temp_min,
+                wind_speed: data.wind.speed,
+                wind_direction: data.wind.deg,
+                wind_gust: data.wind.gust || 0,
+                sunrise: data.sys.sunrise,
+                sunset: data.sys.sunset,
+            };
+    
+            setWeatherData(formattedWeatherData);
+            setActivePage("searched");
         } catch (error) {
-            console.error("Error fetching city name based on location coordinates. Using Default Location");
+            console.error("Error fetching weather by coordinates:", error);
+            setLocationError("Failed to load location weather.");
         } finally {
             setIsLoading(false);
         }
-    }
+    };
     
     useEffect(() => {
         if (!locationObtained) {
@@ -156,8 +186,7 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const { latitude, longitude } = position.coords;
-                        fetchCityName(latitude, longitude)
-                        fetchWeatherForUserLocation(defaultLocation);
+                        fetchWeatherByCoordinates(latitude, longitude);
                         setLocationObtained(true);
                     },
                     (error) => {
@@ -166,13 +195,12 @@ const Header = ({ setWeatherData, setActivePage, setDefaultLocation, defaultLoca
                     }
                 );
             } else {
-                console.warn("Geolocation error. Fetching weather for default location.");
+                console.warn("Geolocation not supported. Using default location.");
                 fetchWeatherForUserLocation(defaultLocation);
             }
         } else {
             fetchWeatherForUserLocation(defaultLocation);
         }
-        
     }, [defaultLocation, units]);
 
     const fetchWeatherForCity = async (cityName) => {
